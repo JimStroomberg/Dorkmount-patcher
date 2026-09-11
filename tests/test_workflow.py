@@ -58,6 +58,8 @@ def test_complete_workflow_saves_stock_before_transfer_and_verifies_return(synth
                           root=tmp_path, backend=backend, inhibit_factory=NoSleepGuard)
     result = json.loads((run / "session.json").read_text())
     assert result["status"] == "verified"
+    assert result["capabilities"]["dmr_version"] == 2
+    assert result["capabilities"]["features"] == ["dock_directdraw", "dock_navigation"]
     assert models[-1].committed
     assert all((run / f"{name}-stock.bin").read_bytes() == raw for name, raw in stock.items())
 

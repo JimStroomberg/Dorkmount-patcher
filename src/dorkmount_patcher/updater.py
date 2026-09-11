@@ -137,7 +137,7 @@ def install(package, expected_device, progress, root=None, backend=hardware, inh
         identity = backend.check_identity(link)
         if package.mode == "dmr2":
             caps = Client(lambda payload: link.request((0x21, 0), payload)).capabilities()
-            if not caps["navigation"]:
+            if caps["dmr_version"] != 2:
                 raise ProtocolError("The keyboard returned, but the expected DirectDraw extension was not found.")
             journal.data["capabilities"] = caps
         else:

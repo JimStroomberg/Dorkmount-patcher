@@ -129,6 +129,74 @@ Example DMR2 reply while Clock is selected:
 Accept only the implemented versions and limits; unknown values are not a
 promise of compatibility. Capability checks are not full firmware attestation.
 
+### Versions and feature detection
+
+Keep three identities separate: manufacturer firmware from `03/01`, the DMR
+extension version from the capability reply, and your application's own version.
+The current extension leaves all three manufacturer versions at **1.29.0**.
+It already reports **DMR1** or **DMR2** independently; no extra firmware field or
+query is needed for those versions. DMR identifies the supported extension
+contract, not a unique firmware build. Exact image hashes identify the build.
+
+The reference client's `capabilities()` now exposes `dmr_version` and `features`:
+
+| DMR version | `features` | Meaning |
+| --- | --- | --- |
+| 1 | `dock_directdraw` | Volatile drawing on the 320×240 Media Dock |
+| 2 | `dock_directdraw`, `dock_navigation` | The same drawing plus Dock Left/Right notifications |
+
+These names are derived by the client from the two known firmware contracts;
+they are **not additional bytes or feature flags in the reply**. Existing return
+fields, including `navigation`, remain available. The feature list is a tuple
+in Python and becomes an array when saved as JSON.
+
+```python
+caps = screen.capabilities()
+dmr_version = caps["dmr_version"]
+can_draw = "dock_directdraw" in caps["features"]
+can_navigate = "dock_navigation" in caps["features"]
+```
+
+Use feature membership to enable app functions. `selected=False` means Clock is
+inactive; it does not mean support is missing. Capability detection works while
+another view is selected. Navigation still needs the event handling below.
+
+A future additive extension should retain existing operations and introduce a
+new documented DMR version and feature mapping. Do not accept unknown versions
+with a bare `version >= 2` check: validate a known contract first. If future
+hardware variants support different features under one version, add explicit
+on-device feature discovery before supporting them. No DMR3 contract or live
+drawing on the eight display keys is defined or implemented here.
+
+### Detecting removal of the extension
+
+After every reconnect or firmware update, reread manufacturer identity and
+negotiate capabilities; discard previous feature state and frame history.
+A stock update that overwrites the extension removes its DMR reply, even if the
+manufacturer version stays the same. An installation record on the computer is
+not evidence that the extension is still present.
+
+Treat a missing reply as **unconfirmed support**, not proof of stock firmware.
+A timeout can also mean a lost connection: check ordinary identity traffic
+again. Surface permission, busy-device and transport errors separately. Unknown
+DMR versions mean unsupported by this client, not unpatched; unsupported
+manufacturer versions need a compatibility check, not an automatic downgrade.
+
+`capabilities()` raises on failed or unsupported replies and clears the client's
+cached version, features, selection and navigation state, blocking drawing until
+a successful check. A previously returned dictionary is only a snapshot; the app
+must discard it after failure or disconnect. This client does not reconnect or
+launch the updater automatically.
+
+When communication is healthy but custom support cannot be established, a
+companion can say **“Custom screen support isn't available. Open Dorkmount
+Patcher to check setup options.”** Before handing over, stop all vendor-HID
+traffic, close the session, release locks and suspend automatic reconnect until
+the updater has finished. Then establish a fresh session and check again.
+
+This detection flow is covered by synthetic tests. Its behaviour after a real
+native install/restoration still requires the [hardware trial](TESTING.md).
+
 ### Draw rectangles
 
 Coordinates begin at the top left: x increases rightward, y downward. Rectangle

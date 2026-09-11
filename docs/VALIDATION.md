@@ -1,5 +1,18 @@
 # Validation
 
+## Explicit DMR capabilities — 2026-09-11
+
+- The reference client exposes the existing DMR version and named features;
+  no firmware bytes, wire format, build target or application version changed.
+- `make doctor` and `make check` pass locally: 91 tests and 26 subtests, lint and
+  whitespace checks. Synthetic cases cover DMR1/DMR2 outside Clock, unknown
+  versions, malformed replies, timeout, capability revocation and rechecking.
+- The bundled offline developer guide matches the public guide. Original
+  firmware source hashes still pass the extraction checks.
+
+No real keyboard was used. Native installation/restoration and the companion
+detection flow after those operations remain unverified on hardware.
+
 ## Linux release pipeline — 2026-09-11
 
 - The expanded suite passes 80 tests and 26 subtests on the development host. GitHub Actions compatibility checks pass on Python 3.11 and 3.14; the production Linux build runs Python 3.13.

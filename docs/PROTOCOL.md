@@ -26,6 +26,14 @@ The Dorkmount reference controller queues the latest complete screen and seriali
 
 The drawing request prefix remains `DMR\x01`; DMR2 replies to the same capability query with `DMR\x02` and the unchanged 12-byte layout/bounds. New clients accept only those two known magic values. Older strict DMR1 clients refuse DMR2 output. The DMR2 active predicate is selected view `0x200000f2 == 1`, without the Clock-ready subview flag.
 
+The reply's DMR version is separate from the unchanged manufacturer version
+reported by `03/01`. The reference client exposes it as `dmr_version`, with
+`features` derived from the known contract: `dock_directdraw` for DMR1/DMR2 and
+`dock_navigation` for DMR2. No wire fields or firmware bytes change. Unknown
+versions remain unsupported; a larger number alone does not authorize commands.
+See [version and feature detection](DEVELOPERS.md#versions-and-feature-detection)
+for extension evolution and handling a stock update that removes DMR support.
+
 Clock scan index 2 (Left) sends the existing Dock link `80/00` payload `03 01`; index 4 (Right) sends `03 00`. Original Main code translates these into CRC-checked, session-specific QLink `11/02` notifications with sequence zero: `79 00 00 08 04` for Left, `80 00 00 08 03` for Right. Releases do not navigate. The host uses the same QLink owner/reader as graphics and drains its bounded pending queue. No second HID reader, input-key capture, profile write or host key injection is used.
 
 Only DMR2 continuously selected Clock periods deliver events to the enabled-view list; events during observed inactive periods and disconnects are discarded. Because this reuses Profiles' notification format and lacks a view-generation tag, a very fast Clock → Profiles → Clock round-trip entirely between capability probes can still misattribute a Profiles press. Normal exit/re-entry pauses, clears pending navigation and repaints. A future event source/generation field would remove this ambiguity.

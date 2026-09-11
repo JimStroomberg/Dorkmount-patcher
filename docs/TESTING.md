@@ -44,6 +44,14 @@ and physically confirm original Clock behavior. If desired, reinstall DirectDraw
 and repeat the checks. Restoration requires a responsive supported normal-mode
 keyboard; it is not emergency recovery for a nonbooting device.
 
+For companion integration, record manufacturer versions separately from
+`dmr_version` and `features`. The reference client should report `dock_directdraw`
+and `dock_navigation` for DMR2 both inside and outside Clock; only `selected`
+changes. After restoration, reconnect with a fresh session and confirm custom
+functions are disabled and the companion offers setup through the patcher. A
+dropped capability reply with failed ordinary identity traffic must appear as a
+connection problem. These integration checks remain unverified on real hardware.
+
 ## Failure handling
 
 Before installation, Help & details explains missing access, unsupported firmware
