@@ -18,6 +18,7 @@ The source extraction changes no firmware bytes and requires no keyboard update.
 - Compiler-free runtime patching from verified local/downloaded originals; full hash and range checks.
 - Plain-language Linux desktop updater with simulated mode, explicit install action, scoped USB setup, stock copies, a sleep inhibitor, requested-range transfers and fresh reconnect verification.
 - Standalone DirectDraw client, complete developer guide, synthetic protocol/frame tests and Linux bundling. No Dorkmount or private-lab runtime dependency.
+- Ubuntu/CachyOS package metadata, desktop integration and USB rules; GitHub Actions build, installed-package checks and audited alpha/stable release workflow.
 
 The native updater is new and awaits its first hardware test. It is distinct from the previously used official Web update route.
 
@@ -36,12 +37,13 @@ does not allow firmware commands. Demo mode never constructs the real workflow.
 The first packaged release targets Ubuntu 26.04 and newer validated releases and
 fully updated stable CachyOS, both x86-64. macOS on Apple Silicon and Bazzite are
 **Coming soon**; Windows follows later. The existing Mac demo does not establish
-Mac firmware-update support. See [the platform release plan](../README.md#planned-platform-support).
+Mac firmware-update support. See [platform support](../README.md#platform-support).
 
-Linux release preparation includes dependency-aware graphical installation,
-GitHub Actions package builds, clean-desktop installation checks, and documented
-source builds and dependencies for other distributions. It must preserve the
-private/public artifact boundary and the exact firmware checks.
+Linux packages install declared dependencies through the system package manager.
+The container checks cover installation, X11/headless-Wayland launch and removal;
+full desktop and hardware acceptance remain separate. Source builds and dependency
+requirements for other distributions are documented. Every release must preserve
+the private/public artifact boundary and the exact firmware checks.
 
 1. Complete physical installation, restoration, graphics and navigation checks with the new native app. Validate bootloader timing/ACK shapes and the Linux permission/reconnect flow.
 2. Establish interruption and nonbooting-device recovery. The preview stops uncertain transfers without retrying or claiming recovery.

@@ -3,11 +3,12 @@
   "cachyos_test_image": "cachyos/cachyos:latest@sha256:deb4975aa6edfe12da24ee3d89feb6eb963183473c8a22ac79e83aff1f0a18c3",
   "debian_dependencies": [
     "libc6 (>= 2.41)", "libstdc++6 (>= 14)", "libgcc-s1", "libgl1",
-    "libegl1", "libxcb1", "fontconfig", "fonts-dejavu-core", "systemd",
+    "libegl1", "libxcb1", "libwayland-client0", "libwayland-cursor0", "libwayland-egl1",
+    "fontconfig", "fonts-dejavu-core", "systemd",
     "udev", "pkexec", "polkitd", "hicolor-icon-theme", "ca-certificates"
   ],
   "cachyos_dependencies": [
-    "glibc>=2.41", "gcc-libs>=14", "libglvnd", "libxcb", "fontconfig",
+    "glibc>=2.41", "gcc-libs>=14", "libglvnd", "libxcb", "wayland", "fontconfig",
     "ttf-dejavu", "systemd", "polkit", "hicolor-icon-theme", "ca-certificates"
   ]
 }

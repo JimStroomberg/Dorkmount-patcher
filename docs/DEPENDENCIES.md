@@ -9,7 +9,7 @@ The authoritative package lists are in [`packaging/platforms.json`](../packaging
 | Purpose | Ubuntu package names | CachyOS package names |
 |---|---|---|
 | C/C++ runtime | `libc6 >= 2.41`, `libstdc++6 >= 14`, `libgcc-s1` | `glibc >= 2.41`, `gcc-libs >= 14` |
-| Graphics and X11 connection | `libgl1`, `libegl1`, `libxcb1` | `libglvnd`, `libxcb` |
+| Graphics, X11 and Wayland connection | `libgl1`, `libegl1`, `libxcb1`, `libwayland-client0`, `libwayland-cursor0`, `libwayland-egl1` | `libglvnd`, `libxcb`, `wayland` |
 | Font configuration and a known font | `fontconfig`, `fonts-dejavu-core` | `fontconfig`, `ttf-dejavu` |
 | Device rules and sleep inhibition | `systemd`, `udev` | `systemd` |
 | Explicit administrator prompt for source/portable setup | `pkexec`, `polkitd` | `polkit` |

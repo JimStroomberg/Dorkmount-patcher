@@ -1,5 +1,16 @@
 # Validation
 
+## Linux release pipeline — 2026-09-11
+
+- The expanded suite passes 80 tests and 26 subtests on the development host. GitHub Actions compatibility checks pass on Python 3.11 and 3.14; the production Linux build runs Python 3.13.
+- Both native package formats are built from the same frozen application. Release checks install them through APT/pacman in Ubuntu 26.04 and the official CachyOS container, check desktop libraries before installing test tools, launch the demo offscreen and under X11/headless Wayland, validate the desktop entry and USB rule, and verify removal. Package-hook errors fail the CachyOS check.
+- Local CachyOS installation, all three launch paths and removal pass. Initial clean-Ubuntu testing detected a missing Wayland cursor dependency; the package metadata now declares the Wayland runtime explicitly. The complete installed-package checks must pass on the final PR and again before release publication.
+- The release audit passes for the native packages, portable bundle, source archive and wheel. Release metadata records the source commit, dirty-checkout flag and container digests; CI rejects dirty source. The audit excludes private directories, full firmware images, capture files, keys and escaping archive paths.
+- `main` requires a PR, the GitHub Actions **Required checks** result, resolved conversations and linear history. Force pushes/deletion are blocked. Alpha tags select prereleases; stable releases remain drafts pending acceptance.
+
+Container checks do not verify a full desktop/logind session or any physical USB
+operation. The native hardware trial and recovery limitations below still apply.
+
 ## Native updater preview 0.2.0a1 — 2026-09-11
 
 - 68 automated tests pass on the development host, plus 26 parameter subtests. These include compiler-free patch range/hash checks, full production-sized synthetic transfers (85,508 / 81,000 / 325,200 bytes), device-requested windows, malformed ranges, lost ACKs, commit uncertainty, fresh-reconnect verification, GUI consent/failure/demo flow, and complete RGB565 reconstruction.
