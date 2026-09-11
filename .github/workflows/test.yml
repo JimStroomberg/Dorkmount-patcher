@@ -1,16 +1,49 @@
-name: Offline source checks
-on: [push, pull_request]
+name: Checks
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
 permissions:
   contents: read
+concurrency:
+  group: checks-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 jobs:
-  test:
-    runs-on: ubuntu-latest
+  checks:
+    name: Python ${{ matrix.python }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
     strategy:
       matrix:
-        python: ['3.11', '3.13', '3.14']
+        python: ['3.11', '3.14']
+    env:
+      QT_QPA_PLATFORM: offscreen
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: ${{ matrix.python }}
-      - run: python -B -m unittest discover -s tests -v
+      - run: sudo apt-get update && sudo apt-get install -y libgl1 libegl1 libopengl0 libxkbcommon0 libdbus-1-3
+      - run: python -m pip install -r packaging/requirements-build.txt
+      - run: python -m pip install --no-deps --no-build-isolation -e .
+      - run: python tools/release_metadata.py
+      - run: python -m pytest -q
+      - run: ruff check src tests tools examples
+      - run: git diff --check
+  packages:
+    name: Linux packages
+    needs: checks
+    uses: ./.github/workflows/packages.yml
+  required:
+    name: Required checks
+    if: always()
+    needs: [checks, packages]
+    runs-on: ubuntu-24.04
+    steps:
+      - env:
+          CHECKS: ${{ needs.checks.result }}
+          PACKAGES: ${{ needs.packages.result }}
+        run: test "$CHECKS" = success && test "$PACKAGES" = success

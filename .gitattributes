@@ -3,3 +3,5 @@
 *.c text eol=lf
 *.S text eol=lf
 *.ld text eol=lf
+# Preserve upstream license files byte-for-byte, including their final blank line.
+packaging/licenses/** whitespace=-blank-at-eof

@@ -1,0 +1,78 @@
+name: Release candidate
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Version tag matching this checkout, e.g. v0.2.0-alpha.1'
+        required: true
+        type: string
+permissions:
+  contents: read
+concurrency:
+  group: release-candidate
+  cancel-in-progress: false
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    outputs:
+      prerelease: ${{ steps.version.outputs.prerelease }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.13'
+      - name: Validate branch, version and release notes
+        id: version
+        env:
+          RELEASE_TAG: ${{ inputs.tag }}
+        run: |
+          test "$GITHUB_REF" = refs/heads/main
+          python tools/release_metadata.py --check-tag "$RELEASE_TAG" > release.json
+          test -f "docs/releases/$RELEASE_TAG.md"
+          python - <<'PY'
+          import json, os
+          info = json.load(open('release.json'))
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as output:
+              output.write(f"prerelease={str(info['prerelease']).lower()}\n")
+          PY
+  packages:
+    needs: validate
+    uses: ./.github/workflows/packages.yml
+  release:
+    name: Publish alpha or prepare stable draft
+    needs: [validate, packages]
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: linux-packages
+          path: release-assets
+      - name: Create the release with all checked assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ inputs.tag }}
+          PRERELEASE: ${{ needs.validate.outputs.prerelease }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          (cd release-assets && sha256sum --check SHA256SUMS)
+          if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+            echo 'This release already exists. Inspect it; do not overwrite tested assets.' >&2
+            exit 1
+          fi
+          flags=(--draft --latest=false)
+          if [[ "$PRERELEASE" == true ]]; then flags+=(--prerelease); fi
+          gh release create "$RELEASE_TAG" release-assets/* \
+            --target "$GITHUB_SHA" --title "Dorkmount Patcher $RELEASE_TAG" \
+            --notes-file "docs/releases/$RELEASE_TAG.md" "${flags[@]}"
+          if [[ "$PRERELEASE" == true ]]; then
+            gh release edit "$RELEASE_TAG" --draft=false --prerelease --latest=false
+          fi

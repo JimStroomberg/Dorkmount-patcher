@@ -1,0 +1,16 @@
+post_install() {
+    if [[ -S /run/udev/control ]]; then
+        udevadm control --reload-rules
+    fi
+    printf '%s\n' 'Dorkmount: reconnect the keyboard, then open Dorkmount Patcher.'
+}
+
+post_upgrade() {
+    post_install
+}
+
+post_remove() {
+    if [[ -S /run/udev/control ]]; then
+        udevadm control --reload-rules
+    fi
+}

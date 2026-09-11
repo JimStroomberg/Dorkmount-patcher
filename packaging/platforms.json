@@ -1,0 +1,13 @@
+{
+  "ubuntu_test_image": "ubuntu:26.04@sha256:513c074113a871b51a8d16ab445c88779d6452d937a164fb5cc479f32668a41d",
+  "cachyos_test_image": "cachyos/cachyos:latest@sha256:deb4975aa6edfe12da24ee3d89feb6eb963183473c8a22ac79e83aff1f0a18c3",
+  "debian_dependencies": [
+    "libc6 (>= 2.41)", "libstdc++6 (>= 14)", "libgcc-s1", "libgl1",
+    "libegl1", "libxcb1", "fontconfig", "fonts-dejavu-core", "systemd",
+    "udev", "pkexec", "polkitd", "hicolor-icon-theme", "ca-certificates"
+  ],
+  "cachyos_dependencies": [
+    "glibc>=2.41", "gcc-libs>=14", "libglvnd", "libxcb", "fontconfig",
+    "ttf-dejavu", "systemd", "polkit", "hicolor-icon-theme", "ca-certificates"
+  ]
+}

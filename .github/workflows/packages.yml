@@ -1,0 +1,43 @@
+name: Linux package build
+on:
+  workflow_call:
+permissions:
+  contents: read
+jobs:
+  build:
+    name: Build and test installed packages
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.13'
+      - name: Build the shared app, Debian package and CachyOS package
+        run: python tools/build_release.py build
+      - name: Test installation and removal on Ubuntu 26.04
+        run: python tools/build_release.py test --platform ubuntu
+      - name: Test installation and removal on CachyOS
+        run: python tools/build_release.py test --platform cachyos
+      - name: Audit the exact files offered for download
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y libarchive-tools
+          python tools/audit_release.py dist/release --copy-to dist/publish
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: linux-packages
+          path: dist/publish/*
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 1
+      - name: Retain installation-test evidence
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: installation-checks
+          path: dist/release/checks/
+          if-no-files-found: ignore
+          retention-days: 3

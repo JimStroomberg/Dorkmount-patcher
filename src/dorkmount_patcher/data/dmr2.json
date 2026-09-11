@@ -1,0 +1,97 @@
+{
+  "schema": 1,
+  "id": "darkmount-1.29.0-dmr2",
+  "extension": "DMR2",
+  "hardware": {
+    "model": 1,
+    "revision": 1,
+    "usb_vendor": "373f",
+    "usb_product": "0001"
+  },
+  "official_version": "1.29.0",
+  "components": {
+    "main": {
+      "stock_filename": "MCU0_1.29.0.0.bin",
+      "size": 85508,
+      "stock_sha256": "94d6927103b1a0bdbe8a214e90fb7f0bcc4f891a546ada8f63d0f0d2869c5b70",
+      "patched_sha256": "23fa16e4e5bc0fbc520bdfadc35e3d3d2e2cbbdd45ee34651336ce647a421c02"
+    },
+    "dock": {
+      "stock_filename": "MCU1_MMD_1.29.0.0.bin",
+      "size": 81000,
+      "stock_sha256": "d2cbc938269e9c2272c3667320c625cdd418f0dda7e079050c45dbc1f6ebb0df",
+      "patched_sha256": "676f8f535a1d539fb104a87ecddd3e4ab3772eec15d63b06aa0b6b1608bd5b5e"
+    },
+    "numpad": {
+      "stock_filename": "MCU2_NPD_1.29.0.0.bin",
+      "size": 325200,
+      "stock_sha256": "12a57913e1a3bf4ecddd95a4877d93fbd5fa9b8c9ece988f535f5e81500baf1d",
+      "patched_sha256": "12a57913e1a3bf4ecddd95a4877d93fbd5fa9b8c9ece988f535f5e81500baf1d"
+    }
+  },
+  "patches": [
+    {
+      "component": "main",
+      "offset": 34276,
+      "length": 1,
+      "purpose": "Route Dock command zero to its dispatcher",
+      "original_sha256": "bbeebd879e1dff6918546dc0c179fdde505f2a21591c9a9c96e36b054ec5af83",
+      "replacement_hex": "38",
+      "replacement_sha256": "2c624232cdd221771294dfbb310aca000a0df6ac8b66b696d90ef06fdefb64a3"
+    },
+    {
+      "component": "dock",
+      "offset": 14944,
+      "length": 4,
+      "purpose": "Replace Clock entry with return",
+      "original_sha256": "32259f888cf16760aec2fe831960c9b8495efc3494bba92af65a4a7cee87a930",
+      "replacement_hex": "704700bf",
+      "replacement_sha256": "0c302d771ae76f031fe8c4a87c6f54f6b1e93bbf4552d26a8ea553f2a89c0530"
+    },
+    {
+      "component": "dock",
+      "offset": 14948,
+      "length": 288,
+      "purpose": "Original project drawing handler",
+      "original_sha256": "e5fd627062194e56223503603bde7646fa98f3f05f16d48364806e4e03ba5b25",
+      "replacement_hex": "f0b585b020b105b0bde8f04001f0d0bc3d4c25780b2d1ad33d2d18d86078b0b9e079442813d1207a4d2810d1607a52280dd1a07a01280ad134480b2d0088e67a08bf002e0bd001281bd1152d1dd200200021032205b0bde8f04002f0e5be2c4a013802a9b0fa80f00b4692e870004009002270c38df811000c2002f0d5fe05b0f0bd002000210a22e4e7228a002aded0638a002bdbd0a0891718b7f5a07fd6d8e18903eb010cbcf1f00fd0d8152d03fb02fe08bf012e1cd0022ec8d1bef1150fc5d8132202eb4e02aa42c0d17a1eacf101034fea4e05fef751fe0026ae420fd2a719787dfff7fcf8387dfff7f9f80236f4e7bef5805fdfd8a48a009401f09cfa002000210022a5e7ac460020f2000020789b0008444d52024001f00015000010",
+      "replacement_sha256": "fdecb5f4ba9de41c1282a6d8085f28f2ab2433e17ce24618eec9ed88ccfc36fc"
+    },
+    {
+      "component": "dock",
+      "offset": 24664,
+      "length": 4,
+      "purpose": "Call drawing dispatcher",
+      "original_sha256": "c6b198b608a0d7d8507a7778b4e65b3cfa55a6b9965aefbaf4c63f851c4736e0",
+      "replacement_hex": "fdf704fd",
+      "replacement_sha256": "cd57500cd9a0a9da1d847cf43ecde1a0b33d5433746fc2d3097f3a9684f93f25"
+    },
+    {
+      "component": "dock",
+      "offset": 20192,
+      "length": 2,
+      "purpose": "Forward Clock Left/Right",
+      "original_sha256": "f2f4c11e8e9e74cde05751f784f2f4493cd4d7265ec37844cd32dfc66cc34873",
+      "replacement_hex": "76d0",
+      "replacement_sha256": "3a42e3d37c4f344adad603234e0a099accd254a7fdf9ca520318cb3694027202"
+    },
+    {
+      "component": "dock",
+      "offset": 14152,
+      "length": 2,
+      "purpose": "Ignore Clock single-click",
+      "original_sha256": "1c972398125398a3665f212930758ae9518a8c948adbccca6753f11525730591",
+      "replacement_hex": "0028",
+      "replacement_sha256": "2ee788372518190a6ab539cbb20331df1040f21846e3ba836c269aee907c894c"
+    }
+  ],
+  "builder": "firmware/dmr2/build.py",
+  "toolchain": "Clang/LLD/llvm-objcopy 22.1.8",
+  "flashing_included": true,
+  "source_sha256": {
+    "firmware/dmr2/build.py": "2338a41878ab4799ebde6e1199d6f66e228cb728b81963f67d2a2d47b98d0848",
+    "firmware/dmr2/live-draw-hooks.S": "0433094f2eac94bc15c14442e64f40548c388d7ce7166c6aef346be9569f3892",
+    "firmware/dmr2/live-draw.c": "baec28b0c8558258406eef2d70016cb584c03f6c4d404b5c3a58be5b9eac67b6",
+    "firmware/dmr2/live-draw.ld": "50750643c9e9a74d046f4c8b0d239abc0a2f3b650489fcef9fa47bcba50af2f6"
+  }
+}

@@ -1,0 +1,15 @@
+name: Feature request
+description: Suggest an improvement to the updater or developer interface.
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What would this help someone do?
+      description: Describe the user problem and an example of the desired behaviour.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed change
+      description: Add relevant platform or protocol details. Keep private research local.
