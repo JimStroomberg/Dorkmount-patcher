@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=77", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dorkmount-patcher"
+version = "0.2.0a1"
+description = "Add DirectDraw to the be quiet! Dark Mount Media Dock"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "GPL-3.0-only"
+license-files = ["LICENSE", "THIRD_PARTY.md"]
+authors = [{name = "Jim Stroomberg", email = "6593248+JimStroomberg@users.noreply.github.com"}]
+dependencies = []
+
+[project.urls]
+Repository = "https://github.com/JimStroomberg/Dorkmount-patcher"
+Issues = "https://github.com/JimStroomberg/Dorkmount-patcher/issues"
+
+[project.optional-dependencies]
+desktop = ["PySide6>=6.11.2,<7"]
+dev = ["pytest>=8", "ruff>=0.11", "build>=1", "PySide6>=6.11.2,<7"]
+
+[project.scripts]
+dorkmount-patcher = "dorkmount_patcher.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+dorkmount_patcher = ["data/*.json", "data/*.rules", "data/*.md"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "I"]

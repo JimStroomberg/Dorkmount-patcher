@@ -1,0 +1,10 @@
+include LICENSE THIRD_PARTY.md VERSION
+include .dockerignore .gitignore .gitattributes Makefile CONTRIBUTING.md
+recursive-include .github *.md *.yml
+recursive-include firmware *.py *.c *.S *.ld *.json
+recursive-include docs *.md
+recursive-include examples *.py
+recursive-include packaging *.py *.txt *.json *.sh *.desktop *.svg *.install Dockerfile debian-postinst debian-postrm
+recursive-include tests *.py
+recursive-include tools *.py
+global-exclude .DS_Store *.bin *.elf *.o *.pyc

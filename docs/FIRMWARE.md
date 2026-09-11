@@ -1,6 +1,9 @@
 # Firmware compatibility and release boundary
 
-**Custom graphics require an installed DMR extension.** The normal Dark Mount firmware does not expose this graphics endpoint. This repository builds the tested DMR1 and DMR2 images offline; it does not install them. The separate Dorkmount controller accepts DMR1 graphics and DMR2 graphics/navigation. Installation remains an onboarding barrier for ordinary owners.
+**Custom graphics require an installed DMR extension.** Version 0.2.0a1 adds
+a Linux desktop installer and compiler-free DMR2 patching alongside the original
+offline builders. Extension bytes are unchanged; the new native installer has
+not yet been tested on hardware. Follow [TESTING.md](TESTING.md) for the trial.
 
 The extension changes one routing byte in Main and reuses the existing Clock renderer space on the Media Dock. The Numpad firmware stays stock. Clock becomes the host dashboard view. Widget changes happen on Linux. The manufacturer version replies remain 1.29.0, so a version string alone cannot establish compatibility. The app checks exact DMR capabilities before drawing; this is a protocol check, not a firmware attestation.
 
@@ -50,7 +53,13 @@ The output must be new. All source hashes, output hashes, sizes and patch extent
 
 The research keyboard was updated using the official Web updater with an instrumented, immutable package selecting the exact tested images. WebHID and independent USB reconstruction verified every transferred byte and successful validation/commit, followed by normal interface return. This involved research tooling and is **not a supported installation flow shipped here**. The official web UI alone does not provide a documented custom-image upload button. Do not assume building files makes an unmodified keyboard usable with Dorkmount.
 
-Before a general release, the project needs a reproducible, reviewed installation/restoration workflow with device identification, exact file selection, progress, interruption handling and recovery guidance. The stock rollback files are known, but recovery from nonbooting application code has not been demonstrated. A working data-only Clock modification was restored to stock successfully; restoration from the executable graphics extension remains untested. Firmware changes can brick hardware; host backups do not restore keyboard firmware.
+The native flow is specified in [UPDATER-PROTOCOL.md](UPDATER-PROTOCOL.md): fixed
+inputs, exact hashes/ranges, restoration copies, device-requested transfers and
+fresh normal-mode verification. Physical installation, restoration and
+interruption behavior still need validation. Recovery from nonbooting code
+remains unproven. The earlier data-only Clock marker was restored to stock;
+restoration from executable graphics code remains untested. Firmware updates
+can brick hardware; host backups do not restore keyboard firmware.
 
 For an already compatible Dock, the application uses session management, the read-only `03/01` identity query and the bounded volatile `21/00` drawing command. Unsupported capability replies stop physical output. The controller graphics path does not invoke firmware updates. Its separate display-key image feature does use persistent storage and is unrelated to DMR drawing.
 

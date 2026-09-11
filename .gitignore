@@ -1,4 +1,9 @@
 /.venv/
+.DS_Store
+*.egg-info/
+.coverage
+/htmlcov/
+/.test-venv/
 /.local/
 /private*/
 /inputs/

@@ -1,5 +1,9 @@
 # DMR volatile graphics and navigation
 
+For a self-contained implementation guide, including the complete QLink envelope,
+session handshake, packet examples and a runnable client, start with
+[DEVELOPERS.md](DEVELOPERS.md). The low-level DMR contract below is unchanged.
+
 Transport uses the upstream QLink session, sequence, CRC16/MODBUS and status checks. Vendor HID is discovered by the normal USB identity `373f:0001` and report-descriptor prefix `0600ff0901a101`. One process must own the command session and sequence stream. The Dorkmount reference controller coordinates its instances with an advisory lock. Other vendor-control programs must be closed.
 
 A read-only `03/01` model/revision/version query must confirm the supported baseline before the graphics command is enabled. It does not query a serial number.
