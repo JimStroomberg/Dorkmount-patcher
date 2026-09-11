@@ -18,6 +18,9 @@ The authoritative package lists are in [`packaging/platforms.json`](../packaging
 
 Use a normal graphical desktop with a working GPU/driver stack, active local session and authorization agent. OS core/graphics libraries are intentionally supplied by the distribution. Additional Qt platform libraries are bundled. The packages install the vendor-interface rule in `/usr/lib/udev/rules.d/`; reconnect the keyboard after installing. They do not open or flash a device in package scripts.
 
+Fontconfig also comes from the distribution so its library matches the system's
+font configuration format. The GUI uses the packaged DejaVu Sans font on Linux.
+
 The initial release targets Ubuntu 26.04 and current stable CachyOS on x86-64. New Ubuntu releases need validation. macOS Apple Silicon and Bazzite are Coming soon; Windows is later. The generic Linux archive retains the same system requirements but does not install dependencies or rules automatically.
 
 ## Running from source on other distributions

@@ -4,6 +4,7 @@
 import argparse
 import json
 import os
+import shutil
 import subprocess
 import tarfile
 from pathlib import Path
@@ -52,6 +53,10 @@ def build(output):
 def test(output, platform):
     results = output / "checks" / platform
     results.mkdir(parents=True, exist_ok=True)
+    scripts = results / "scripts"
+    scripts.mkdir(exist_ok=True)
+    for script in (ROOT / "packaging").glob("test-*.sh"):
+        shutil.copyfile(script, scripts / script.name)
     if platform == "ubuntu":
         # The minimal Ubuntu image has no CA package yet. Bootstrap HTTPS APT
         # using public trust roots from the pinned official build base; package
@@ -65,7 +70,7 @@ def test(output, platform):
     namespace = ["--cap-add", "SYS_ADMIN"] if platform == "cachyos" else []
     run("docker", "run", "--rm", "--platform", "linux/amd64", *namespace,
         "--env", f"EXPECTED_VERSION={metadata()['version']}", "--env", "LANG=C.UTF-8",
-        "--volume", f"{output}:/packages:ro", "--volume", f"{ROOT / 'packaging'}:/scripts:ro",
+        "--volume", f"{output}:/packages:ro", "--volume", f"{scripts}:/scripts:ro",
         "--volume", f"{results}:/results", image_for(platform),
         "bash", f"/scripts/test-{platform}.sh")
 
