@@ -1,0 +1,79 @@
+{
+  "schema": 1,
+  "id": "darkmount-1.29.0-dmr2",
+  "extension": "DMR2",
+  "hardware": {
+    "model": 1,
+    "revision": 1,
+    "usb_vendor": "373f",
+    "usb_product": "0001"
+  },
+  "official_version": "1.29.0",
+  "components": {
+    "main": {
+      "stock_filename": "MCU0_1.29.0.0.bin",
+      "size": 85508,
+      "stock_sha256": "94d6927103b1a0bdbe8a214e90fb7f0bcc4f891a546ada8f63d0f0d2869c5b70",
+      "patched_sha256": "23fa16e4e5bc0fbc520bdfadc35e3d3d2e2cbbdd45ee34651336ce647a421c02"
+    },
+    "dock": {
+      "stock_filename": "MCU1_MMD_1.29.0.0.bin",
+      "size": 81000,
+      "stock_sha256": "d2cbc938269e9c2272c3667320c625cdd418f0dda7e079050c45dbc1f6ebb0df",
+      "patched_sha256": "676f8f535a1d539fb104a87ecddd3e4ab3772eec15d63b06aa0b6b1608bd5b5e"
+    },
+    "numpad": {
+      "stock_filename": "MCU2_NPD_1.29.0.0.bin",
+      "size": 325200,
+      "stock_sha256": "12a57913e1a3bf4ecddd95a4877d93fbd5fa9b8c9ece988f535f5e81500baf1d",
+      "patched_sha256": "12a57913e1a3bf4ecddd95a4877d93fbd5fa9b8c9ece988f535f5e81500baf1d"
+    }
+  },
+  "patches": [
+    {
+      "component": "main",
+      "offset": 34276,
+      "length": 1,
+      "purpose": "Route Dock command zero to its dispatcher",
+      "original_sha256": "bbeebd879e1dff6918546dc0c179fdde505f2a21591c9a9c96e36b054ec5af83"
+    },
+    {
+      "component": "dock",
+      "offset": 14944,
+      "length": 4,
+      "purpose": "Replace Clock entry with return",
+      "original_sha256": "32259f888cf16760aec2fe831960c9b8495efc3494bba92af65a4a7cee87a930"
+    },
+    {
+      "component": "dock",
+      "offset": 14948,
+      "length": 288,
+      "purpose": "Original project drawing handler",
+      "original_sha256": "e5fd627062194e56223503603bde7646fa98f3f05f16d48364806e4e03ba5b25"
+    },
+    {
+      "component": "dock",
+      "offset": 24664,
+      "length": 4,
+      "purpose": "Call drawing dispatcher",
+      "original_sha256": "c6b198b608a0d7d8507a7778b4e65b3cfa55a6b9965aefbaf4c63f851c4736e0"
+    },
+    {
+      "component": "dock",
+      "offset": 20192,
+      "length": 2,
+      "purpose": "Forward Clock Left/Right",
+      "original_sha256": "f2f4c11e8e9e74cde05751f784f2f4493cd4d7265ec37844cd32dfc66cc34873"
+    },
+    {
+      "component": "dock",
+      "offset": 14152,
+      "length": 2,
+      "purpose": "Ignore Clock single-click",
+      "original_sha256": "1c972398125398a3665f212930758ae9518a8c948adbccca6753f11525730591"
+    }
+  ],
+  "builder": "firmware/dmr2/build.py",
+  "toolchain": "Clang/LLD/llvm-objcopy 22.1.8",
+  "flashing_included": false
+}
