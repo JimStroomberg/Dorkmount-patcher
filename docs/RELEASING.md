@@ -23,7 +23,7 @@ PR workflows have read-only repository permissions and no release credentials. R
 
 1. Open a PR with the version changes, implementation, validation evidence and `docs/releases/<tag>.md` notes. Complete the archive/provenance review and merge after **Required checks** passes.
 2. On `main`, run **Actions → Release candidate → Run workflow** and enter the exact tag, such as `v0.2.0-alpha.1`.
-3. The workflow validates the version, builds and tests packages, audits release contents, creates a draft with all assets, then publishes an alpha as a **prerelease**. It is not marked as the latest stable release.
+3. The workflow validates the version, builds and tests packages, audits release contents, creates a draft with all assets, downloads them again and checks every filename and byte before publishing an alpha as a **prerelease**. It is not marked as the latest stable release.
 4. Download and test those exact assets with hardware. Retain captures/full journals privately; describe relevant outcomes in reviewed release notes or issues without firmware attachments.
 
 The repository's visibility is a separate maintainer decision. A release in a private repository remains accessible only to users with access. Do not change repository visibility as a side effect of packaging.
@@ -37,6 +37,11 @@ Until the native installer has physical installation/restoration evidence, distr
 ## Assets and failed runs
 
 Native `.deb` and `.pkg.tar.zst` packages are the primary downloads. Also retain the portable Linux archive, matching source archive, independent Python wheel, `SHA256SUMS`, artifact manifest, and build metadata. Only the explicit list in `tools/audit_release.py` is uploaded. Manufacturer images, patched complete images, `.local/`, keys, captures and research clones must never be included.
+
+Debian's internal alpha version uses `~` for correct upgrade ordering. The download
+filename uses `-` because GitHub normalizes tildes during upload. The checksum
+list uses the exact downloadable filename; never infer the internal version from
+the filename alone.
 
 CI artifacts expire quickly to limit storage; GitHub Release assets are the distribution copies. A failed run does not publish a successful alpha. If creation/upload fails after a draft exists, inspect the draft and hashes before resuming. The workflow refuses to overwrite an existing release. Do not delete or replace published assets to hide an error; issue a new version.
 

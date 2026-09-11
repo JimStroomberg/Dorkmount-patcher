@@ -31,14 +31,17 @@ def project(tmp_path, version):
     return tmp_path
 
 
-@pytest.mark.parametrize("version,tag,deb,arch,alpha", [
-    ("1.2.3a2", "v1.2.3-alpha.2", "1.2.3~alpha2-1", "1.2.3alpha2", True),
-    ("1.2.3", "v1.2.3", "1.2.3-1", "1.2.3", False),
+@pytest.mark.parametrize("version,tag,deb,filename,arch,alpha", [
+    ("1.2.3a2", "v1.2.3-alpha.2", "1.2.3~alpha2-1",
+     "dorkmount-patcher_1.2.3-alpha2-1_amd64.deb", "1.2.3alpha2", True),
+    ("1.2.3", "v1.2.3", "1.2.3-1",
+     "dorkmount-patcher_1.2.3-1_amd64.deb", "1.2.3", False),
 ])
-def test_release_maps_alpha_and_stable_versions(tmp_path, version, tag, deb, arch, alpha):
+def test_release_maps_alpha_and_stable_versions(tmp_path, version, tag, deb, filename, arch, alpha):
     info = release.metadata(project(tmp_path, version))
     assert (info["tag"], info["debian_version"], info["arch_version"], info["prerelease"]) == (
         tag, deb, arch, alpha)
+    assert info["debian_filename"] == filename
 
 
 def test_release_refuses_mismatched_versions(tmp_path):

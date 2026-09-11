@@ -26,10 +26,14 @@ def metadata(root=ROOT):
     if actual != version:
         raise ValueError("Runtime version must match pyproject.toml.")
     base, alpha = match.groups()
+    debian_version = f"{base}~alpha{alpha}-1" if alpha else f"{base}-1"
     return {
         "version": version,
         "tag": f"v{base}-alpha.{alpha}" if alpha else f"v{base}",
-        "debian_version": f"{base}~alpha{alpha}-1" if alpha else f"{base}-1",
+        "debian_version": debian_version,
+        # GitHub normalizes '~' in asset names. Keep Debian's ordering inside the
+        # package and use a portable filename for checksums and downloads.
+        "debian_filename": f"dorkmount-patcher_{debian_version.replace('~', '-')}_amd64.deb",
         "arch_version": f"{base}alpha{alpha}" if alpha else base,
         "prerelease": alpha is not None,
         "maintainer": f"{project['authors'][0]['name']} <{project['authors'][0]['email']}>",

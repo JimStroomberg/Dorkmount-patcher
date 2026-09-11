@@ -79,7 +79,7 @@ def build(bundle, output):
     )
     for name in ("postinst", "postrm"):
         copy(ROOT / f"packaging/debian-{name}", control / name, 0o755)
-    deb = output / f"dorkmount-patcher_{info['debian_version']}_amd64.deb"
+    deb = output / info["debian_filename"]
     subprocess.run(["dpkg-deb", "--root-owner-group", "--build", str(tree), str(deb)], check=True)
     (output / "release-metadata.json").write_text(json.dumps({**info,
         "source_commit": os.environ.get("SOURCE_COMMIT", "local"),
