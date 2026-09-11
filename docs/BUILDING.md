@@ -48,6 +48,12 @@ The shared PyInstaller application is built using `packaging/Dockerfile`; `tools
 
 Package tests install through APT/pacman, allowing those tools to resolve dependencies. They check the installed desktop entry, USB rule, bundled developer guide, version, offscreen/X11/headless-Wayland demo launch, and uninstall. They do not run a complete user desktop, logind session or physical keyboard update.
 
+Before adding display-test tools, the tests check the app's library dependencies
+and launch its offscreen demo. The disposable CachyOS test container receives
+`SYS_ADMIN` only to support pacman's network-isolated package hooks; the hook
+isolation and package-signature checks remain enabled. No host devices or
+personal directories are mounted.
+
 `tools/audit_release.py` selects the release assets and writes checksums. For native package inspection it requires `dpkg-deb` and `bsdtar` on Linux; the GitHub workflow provides them. The intermediate rootfs and CachyOS build input are not release assets.
 
 ## Rebuild the firmware extension

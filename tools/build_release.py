@@ -60,7 +60,10 @@ def test(output, platform):
         with (results / "bootstrap-ca.crt").open("wb") as stream:
             run("docker", "run", "--rm", "--platform", "linux/amd64", base,
                 "cat", "/etc/ssl/certs/ca-certificates.crt", stdout=stream)
-    run("docker", "run", "--rm", "--platform", "linux/amd64",
+    # CachyOS pacman isolates package hooks with a network namespace. Permit
+    # namespace creation in this disposable container, preserving that isolation.
+    namespace = ["--cap-add", "SYS_ADMIN"] if platform == "cachyos" else []
+    run("docker", "run", "--rm", "--platform", "linux/amd64", *namespace,
         "--env", f"EXPECTED_VERSION={metadata()['version']}", "--env", "LANG=C.UTF-8",
         "--volume", f"{output}:/packages:ro", "--volume", f"{ROOT / 'packaging'}:/scripts:ro",
         "--volume", f"{results}:/results", image_for(platform),

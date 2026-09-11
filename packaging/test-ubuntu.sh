@@ -7,6 +7,7 @@ printf '%s\n' 'Acquire::https::CaInfo "/results/bootstrap-ca.crt";' 'Acquire::ht
 apt-get update -qq
 # The package manager must discover runtime requirements from the .deb.
 apt-get install -y --no-install-recommends /packages/*.deb
+sh /scripts/test-runtime.sh
 # These are test harness tools, deliberately installed after the app/dependencies.
 apt-get install -y --no-install-recommends desktop-file-utils xvfb xauth weston
 sh /scripts/test-installed.sh

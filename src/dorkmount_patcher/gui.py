@@ -376,6 +376,10 @@ class Window(QMainWindow):
 
 def run(demo=False, screenshot=None):
     app = QApplication.instance() or QApplication(sys.argv[:1])
+    if sys.platform.startswith("linux"):
+        from PySide6.QtGui import QFont
+        # Native packages supply this font, including on a minimal desktop.
+        app.setFont(QFont("DejaVu Sans"))
     app.setApplicationName("Dorkmount-patcher")
     window = Window(demo=demo)
     window.show()
