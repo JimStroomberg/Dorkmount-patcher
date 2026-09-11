@@ -48,8 +48,19 @@ chain. Check the actual selector artwork, highlight, accent, idle/wake, other
 apps, physical navigation and full install/restore flow using [TESTING.md](TESTING.md).
 Generated images, exact original-instruction evidence and firmware stay ignored.
 
-Host checks and candidate package results are recorded separately from these
-firmware-model results. Public CI does not receive manufacturer firmware.
+Local candidate packages built from clean implementation commit `ad8b61b` pass
+Ubuntu 26.04 and current stable CachyOS container installation, automatic runtime
+dependency resolution, offscreen/X11/headless-Wayland launch, desktop entry/USB
+rule checks and removal. The installed-package checker requires both legacy
+DMR2 and new DMR3 payloads. These checks do not exercise a physical desktop/USB
+session or flash firmware.
+
+All seven distributable assets pass the archive/privacy audit and a fresh
+checksum readback. The app/source archives contain no private workstation paths
+or full firmware members; the native app includes the exact DMR3 patch data and
+updated instructions, without the optional firmware-checker libraries. Build
+metadata records the clean source commit and `hardware_verified: false`.
+The candidate remains unpublished. Public CI does not receive manufacturer firmware.
 
 ## Explicit DMR capabilities — 2026-09-11
 
