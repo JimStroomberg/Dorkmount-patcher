@@ -54,7 +54,7 @@ def audit(path):
 def assets(directory):
     info = metadata()
     expected = [
-        f"dorkmount-patcher_{info['debian_version']}_amd64.deb",
+        info["debian_filename"],
         f"dorkmount-patcher-{info['arch_version']}-1-x86_64.pkg.tar.zst",
         f"Dorkmount-patcher-{info['version']}-linux-x86_64.tar.gz",
         f"dorkmount_patcher-{info['version']}.tar.gz",

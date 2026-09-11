@@ -2,7 +2,7 @@
 
 Add custom dashboards and widgets to the be quiet! Dark Mount Media Dock.
 
-**Linux alpha 0.2.0a1.** A guided desktop app checks the keyboard,
+**Linux alpha 0.2.0a2.** A guided desktop app checks the keyboard,
 downloads the exact supported official firmware, adds DirectDraw locally,
 installs it and verifies its return. Other developers can use the independent
 protocol documentation and reference client to build their own applications.
@@ -36,7 +36,7 @@ On Ubuntu, open the `.deb` with the system's package installer, or install it wi
 `sudo pacman -U ./dorkmount-patcher-*-x86_64.pkg.tar.zst` from the download folder.
 Confirm the installation, reconnect the keyboard and open **Dorkmount Patcher**
 from the application menu. No Python setup, firmware compiler or companion app is
-needed. The [release notes](docs/releases/v0.2.0-alpha.1.md) include exact filenames.
+needed. The [release notes](docs/releases/v0.2.0-alpha.2.md) include exact filenames.
 
 1. Connect the keyboard with its screen and number pad attached. Close other
    keyboard-control applications.

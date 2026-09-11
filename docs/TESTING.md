@@ -11,7 +11,7 @@ separate claims. Recovery from nonbooting firmware remains unproven.
 2. Keep the Media Dock and Numpad attached. Close Dorkmount, IO Center, browser
    keyboard-control tabs and background controllers. Automatic-start controllers
    must stay stopped until verification finishes.
-3. Install the Ubuntu or CachyOS package using the [release instructions](releases/v0.2.0-alpha.1.md),
+3. Install the Ubuntu or CachyOS package using the [release instructions](releases/v0.2.0-alpha.2.md),
    reconnect the keyboard and open **Dorkmount Patcher** from the application menu.
    If access is denied, choose **Set up USB access**, approve the password prompt
    and reconnect the keyboard. The portable bundle requires this access setup too.

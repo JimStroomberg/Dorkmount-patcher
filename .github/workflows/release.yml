@@ -77,6 +77,11 @@ jobs:
           gh release create "$RELEASE_TAG" release-assets/* \
             --target "$GITHUB_SHA" --title "Dorkmount Patcher $RELEASE_TAG" \
             --notes-file "docs/releases/$RELEASE_TAG.md" "${flags[@]}"
+          # GitHub may normalize uploaded filenames. Verify the actual downloads
+          # while the release is still a draft, including names and metadata.
+          gh release download "$RELEASE_TAG" --dir downloaded-assets
+          (cd downloaded-assets && sha256sum --check SHA256SUMS)
+          diff -qr release-assets downloaded-assets
           if [[ "$PRERELEASE" == true ]]; then
             gh release edit "$RELEASE_TAG" --draft=false --prerelease --latest=false
           fi
