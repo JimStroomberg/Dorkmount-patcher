@@ -1,5 +1,56 @@
 # Validation
 
+## DMR3 Dashboard candidate — 2026-09-11
+
+The new Dashboard firmware is **offline-validated only**. Native installation,
+restoration and all physical keyboard behaviour remain unverified. Earlier DMR2
+hardware results below do not establish safety or correctness for DMR3.
+
+- LLVM 22.1.8 reproduces the exact candidate from all three pinned official
+  images. Compiler-free runtime patching independently produces the same images;
+  the preserved DMR2 output also retains its exact hash. No DMR1/DMR2 source or
+  legacy payload changed. DMR3 Dock SHA-256 is
+  `8aadce6d0e2f89cbd9d9db08c26dac4d16a4ad55f1a0c1e18f589ee228ad2c1d`.
+- `make doctor` and `make check` pass locally: 97 tests and 35 subtests, lint
+  and whitespace checks. Coverage includes all known capability versions,
+  refusal of a DMR2 reply after a DMR3 installation and unchanged legacy source
+  hashes. The public and bundled developer guides match. The demo's complete
+  Check/Prepare flow was inspected at the minimum window size; its explicit
+  install acknowledgement is still required.
+- `tools/check_dashboard.py` executes original Dock instructions with Unicorn
+  2.1.4 and audits reused-code references with Capstone 5.0.9. Context7 supplied
+  the emulator API guidance. The checker accepts only the pinned original and
+  candidate hashes and writes its evidence and modeled PNG previews locally.
+- The candidate passes 246 graphics transactions, including 200 deterministic
+  malformed requests, full-frame replacement and an exact bottom-right pixel
+  rectangle. Inactive drawing returns status 10 without changing pixels;
+  malformed requests return status 3.
+- Actual Clock selection reaches only the waiting view. Capabilities leave it
+  unchanged. Clock/stopwatch rendering, the timer editor, single-click and the
+  old Clock accent-colour redraw cannot overwrite companion pixels. Double-click
+  returns to the selector; re-entry resets to Waiting… and a full frame replaces it.
+- Full selector rendering and 12 highlight transitions preserve every modeled
+  pixel outside the former Clock tile. Other full-image/crop calls match stock.
+  Original Left/Right logic emits the expected Dock notifications on presses,
+  and none on releases. The original LCD GPIO path produces the same waiting
+  and selected-icon pixels as the faster graphics model.
+- Maximum observed stack use is 248 bytes against the original 1,024-byte stack.
+  Initialized RAM and the original application update-reset handoff match stock.
+  A conservative branch/literal scan finds eight external references into reused
+  code regions; each still targets a preserved entry point. One halfword-decoding
+  false positive is excluded only after checking its complete original instruction.
+
+The model substitutes deterministic fixtures for external image storage and
+palette reads. It executes the original text/menu/window/rectangle/QLink paths,
+but does not emulate the entire device, interrupts, real USB, bootloader, timing
+or recovery. Stack measurement covers exercised paths, not every possible call
+chain. Check the actual selector artwork, highlight, accent, idle/wake, other
+apps, physical navigation and full install/restore flow using [TESTING.md](TESTING.md).
+Generated images, exact original-instruction evidence and firmware stay ignored.
+
+Host checks and candidate package results are recorded separately from these
+firmware-model results. Public CI does not receive manufacturer firmware.
+
 ## Explicit DMR capabilities — 2026-09-11
 
 - The reference client exposes the existing DMR version and named features;

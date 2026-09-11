@@ -5,9 +5,11 @@ Media Dock screen. Your application owns its layout, data sources and widgets.
 Nothing in the protocol requires Dorkmount, Qt, MangoHud or a particular operating
 system. The reference connection adapter currently supports Linux.
 
-The keyboard needs the supported DMR1 or DMR2 firmware extension. DMR2 is the
-current target. On stock firmware, custom Dock graphics are unavailable.
-The extension repurposes **Clock**, including its normal clock/timer content.
+The keyboard needs a supported DMR1, DMR2 or DMR3 firmware extension. DMR3 is the
+current development candidate and **has not been tested on real hardware**.
+On stock firmware, custom Dock graphics are unavailable. DMR3 replaces the Clock
+tile with a **Dashboard icon** and opens directly to **Waiting...**, without the
+clock/timer/stopwatch submenu. DMR1/DMR2 still use the Clock tile.
 Other stock views remain available. The eight display keys are a separate device
 feature; this extension does not provide live drawing on them.
 
@@ -23,7 +25,7 @@ python3 -m venv .venv
 ```
 
 Close all other vendor-HID keyboard controllers, including the updater. Select
-**Clock** on the screen. The example opens only the vendor interface, verifies
+**Dashboard** on the screen (Clock on DMR1/DMR2). The example opens only the vendor interface, verifies
 the supported device, negotiates DMR capabilities, and draws three coloured bands.
 It never enables firmware commands or writes persistent images/settings.
 
@@ -33,7 +35,7 @@ from dorkmount_patcher.directdraw import open_keyboard
 with open_keyboard() as screen:
     caps = screen.capabilities()
     if not caps["selected"]:
-        raise SystemExit("Select Clock on the keyboard screen, then try again.")
+        raise SystemExit("Select Dashboard (Clock on older patches), then try again.")
     screen.fill(0, 0, 320, 240, 0x0000)
     screen.fill(20, 30, 280, 45, 0xF800)  # red
     screen.fill(20, 95, 280, 45, 0x07E0)  # green
@@ -107,7 +109,7 @@ an ACK; queue them separately. A notification is never a request acknowledgment.
 ### Negotiate DirectDraw
 
 All requests use feature/command **`21/00`**. Payload starts with
-`44 4d 52 01` (`DMR` + byte 1), including on DMR2. Query payload:
+`44 4d 52 01` (`DMR` + byte 1), including on DMR2/DMR3. Query payload:
 
 ```text
 44 4d 52 01 00
@@ -117,15 +119,15 @@ The capability reply is exactly 12 bytes:
 
 | Field | Type | Supported value |
 | --- | --- | --- |
-| Magic/version | 4 bytes | `44 4d 52 01` or `44 4d 52 02` |
+| Magic/version | 4 bytes | `44 4d 52 01`, `44 4d 52 02` or `44 4d 52 03` |
 | Width | u16le | 320 |
 | Height | u16le | 240 |
 | Maximum pixel block | u8 | 21 pixels |
-| Clock selected | u8 | 0 or 1 |
+| Custom view selected | u8 | 0 or 1; Dashboard on DMR3, Clock on DMR1/DMR2 |
 | Maximum solid fill | u16le | 4096 pixels |
 
-Example DMR2 reply while Clock is selected:
-`44 4d 52 02 40 01 f0 00 15 01 00 10`.
+Example DMR3 reply while Dashboard is selected:
+`44 4d 52 03 40 01 f0 00 15 01 00 10`.
 Accept only the implemented versions and limits; unknown values are not a
 promise of compatibility. Capability checks are not full firmware attestation.
 
@@ -134,7 +136,7 @@ promise of compatibility. Capability checks are not full firmware attestation.
 Keep three identities separate: manufacturer firmware from `03/01`, the DMR
 extension version from the capability reply, and your application's own version.
 The current extension leaves all three manufacturer versions at **1.29.0**.
-It already reports **DMR1** or **DMR2** independently; no extra firmware field or
+It reports **DMR1**, **DMR2** or **DMR3** independently; no extra firmware field or
 query is needed for those versions. DMR identifies the supported extension
 contract, not a unique firmware build. Exact image hashes identify the build.
 
@@ -144,8 +146,9 @@ The reference client's `capabilities()` now exposes `dmr_version` and `features`
 | --- | --- | --- |
 | 1 | `dock_directdraw` | Volatile drawing on the 320×240 Media Dock |
 | 2 | `dock_directdraw`, `dock_navigation` | The same drawing plus Dock Left/Right notifications |
+| 3 | `dock_directdraw`, `dock_navigation`, `dashboard_view` | The same drawing/navigation plus the Dashboard icon and waiting screen |
 
-These names are derived by the client from the two known firmware contracts;
+These names are derived by the client from the three known firmware contracts;
 they are **not additional bytes or feature flags in the reply**. Existing return
 fields, including `navigation`, remain available. The feature list is a tuple
 in Python and becomes an array when saved as JSON.
@@ -157,7 +160,7 @@ can_draw = "dock_directdraw" in caps["features"]
 can_navigate = "dock_navigation" in caps["features"]
 ```
 
-Use feature membership to enable app functions. `selected=False` means Clock is
+Use feature membership to enable app functions. `selected=False` means the custom view is
 inactive; it does not mean support is missing. Capability detection works while
 another view is selected. Navigation still needs the event handling below.
 
@@ -165,8 +168,21 @@ A future additive extension should retain existing operations and introduce a
 new documented DMR version and feature mapping. Do not accept unknown versions
 with a bare `version >= 2` check: validate a known contract first. If future
 hardware variants support different features under one version, add explicit
-on-device feature discovery before supporting them. No DMR3 contract or live
-drawing on the eight display keys is defined or implemented here.
+on-device feature discovery before supporting them. Live drawing on the eight
+display keys is not implemented in any of these versions.
+
+DMR3 keeps the DMR2 drawing commands and notification layout, but older clients
+that only recognize DMR1/DMR2 will reject its new capability magic. Update the
+client's known-contract list before using this firmware; never simply accept
+every larger version. The reference client in this checkout supports all three.
+
+On each Dashboard entry the firmware clears the screen and draws Waiting... once.
+The first host frame must cover the full screen, replacing every placeholder
+pixel. Capabilities and normal polling do not redraw the placeholder. On exit
+and re-entry, discard the previous frame and repaint completely. There is no
+heartbeat or automatic return to Waiting... if a companion stops after drawing;
+the last pixels remain until a redraw, view transition or another stock display
+event. The image store is unchanged: the selector icon is drawn by firmware.
 
 ### Detecting removal of the extension
 
@@ -224,13 +240,13 @@ green and blue pixels at (0,0), (1,0), (2,0):
 ```
 
 Successful drawing returns an empty payload with status 0. Status 3 rejects an
-invalid request. Status 10 means Clock is not active; stop drawing and query
+invalid request. Status 10 means the custom view is not active; stop drawing and query
 capabilities until it is selected. Other errors stop the transfer.
 
 ## Frame lifecycle and navigation
 
 Keep only the latest pending screen to avoid building a growing output queue.
-Poll capabilities while active and while waiting for Clock. After exit/re-entry,
+Poll capabilities while active and while waiting for the custom view. After exit/re-entry,
 USB reconnect, timeout, lost reply or any interrupted frame, discard the diff
 base and repaint fully. Advance the base only after every operation succeeds.
 Do not blindly retry writes after losing a reply. Existing Dorkmount polls
@@ -238,7 +254,7 @@ capabilities about every 250 ms and repaints fully every five seconds to repair
 a quick exit/re-entry missed between probes. These are host policies, not
 firmware guarantees.
 
-DMR2 sends Left/Right as QLink **`11/02` notifications**, request ID zero:
+DMR2 and DMR3 send Left/Right as QLink **`11/02` notifications**, request ID zero:
 
 | Button | Payload |
 | --- | --- |
@@ -247,13 +263,13 @@ DMR2 sends Left/Right as QLink **`11/02` notifications**, request ID zero:
 
 Verify CRC, session, zero request/fragment fields and exact payloads. Consume
 events through the same QLink reader that owns drawing. Route them to your host
-view list only during continuously observed active Clock periods; discard them
+view list only during continuously observed active custom-view periods; discard them
 on exit, disconnect and re-entry. A reference application can implement this using `qlink.Link` directly.
 
-The notifications reuse the Profiles format. A complete Clock → Profiles → Clock
-round trip between probes can misattribute a Profiles button press. DMR2 has
+The notifications reuse the Profiles format. A complete Dashboard/Clock → Profiles
+→ Dashboard/Clock round trip between probes can misattribute a Profiles button press. DMR2/DMR3 have
 no event-source/view-generation tag to remove that ambiguity. Releases do not
-navigate. Single Menu in Clock is ignored; double-click Menu returns to the
+navigate. Single Menu in the custom view is ignored; double-click Menu returns to the
 stock selector. DMR1 has no host-navigation events.
 
 ## Scope and conformance

@@ -135,9 +135,9 @@ def install(package, expected_device, progress, root=None, backend=hardware, inh
         normal = backend.wait_device(backend.NORMAL, current.port, timeout=60)
         link = backend.connect(normal)
         identity = backend.check_identity(link)
-        if package.mode == "dmr2":
+        if package.mode != "stock":
             caps = Client(lambda payload: link.request((0x21, 0), payload)).capabilities()
-            if caps["dmr_version"] != 2:
+            if caps["dmr_version"] != int(package.mode[-1]):
                 raise ProtocolError("The keyboard returned, but the expected DirectDraw extension was not found.")
             journal.data["capabilities"] = caps
         else:
@@ -154,7 +154,7 @@ def install(package, expected_device, progress, root=None, backend=hardware, inh
                 raise ProtocolError("DirectDraw is still present after the stock update.")
         journal.data.update(status="verified", identity=identity)
         journal.record(event="normal_mode_verified")
-        progress(100, "DirectDraw is ready." if package.mode == "dmr2" else "Original firmware restored.")
+        progress(100, "Your screen is ready." if package.mode != "stock" else "Original firmware restored.")
         return run
     except BaseException as error:
         if journal is not None:

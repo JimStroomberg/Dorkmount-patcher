@@ -68,8 +68,9 @@ validations. Commit requires both Ready ACK and completion. Commit has a
 It is never resent if either its ACK or completion is lost.
 
 After completion the engine waits up to 60 seconds for normal USB return, opens
-a fresh session and verifies model/revision/all three versions. DMR2 installation
-also requires the exact DMR2 capabilities. A stock restoration expects the DMR
+a fresh session and verifies model/revision/all three versions. A DMR installation
+also requires capabilities matching the prepared package exactly: DMR3 for the
+Dashboard candidate, DMR2 for the preserved legacy target. A stock restoration expects the DMR
 endpoint to be absent and rechecks normal identity if the query times out.
 No screen test pattern is sent automatically as part of installation.
 

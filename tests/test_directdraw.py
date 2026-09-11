@@ -31,7 +31,7 @@ class Screen:
         return b""
 
 
-@pytest.mark.parametrize("version", [1, 2])
+@pytest.mark.parametrize("version", [1, 2, 3])
 def test_complete_high_variance_frame_and_partial_frame_reconstruct_exactly(version):
     screen = Screen(version)
     client = Client(screen)
@@ -54,7 +54,7 @@ def test_inactive_view_refuses_draws():
     assert screen.writes == 0
 
 
-@pytest.mark.parametrize("version", [0, 3, 255])
+@pytest.mark.parametrize("version", [0, 4, 255])
 def test_unknown_capabilities_refused(version):
     with pytest.raises(IOError):
         Client(Screen(version))
@@ -63,6 +63,7 @@ def test_unknown_capabilities_refused(version):
 @pytest.mark.parametrize("version,features", [
     (1, ("dock_directdraw",)),
     (2, ("dock_directdraw", "dock_navigation")),
+    (3, ("dock_directdraw", "dock_navigation", "dashboard_view")),
 ])
 @pytest.mark.parametrize("selected", [0, 1])
 def test_version_and_features_are_available_outside_clock(version, features, selected):
@@ -78,7 +79,7 @@ def test_version_and_features_are_available_outside_clock(version, features, sel
 
 @pytest.mark.parametrize("reply", [
     None, b"", b"short",
-    bytes.fromhex("444d52034001f00015010010"),  # Unknown future version.
+    bytes.fromhex("444d52044001f00015010010"),  # Unknown future version.
     bytes.fromhex("444d52024001f00015010020"),  # Changed drawing limits.
     bytes.fromhex("444d52024001f00015020010"),  # Invalid selected-view state.
 ])

@@ -22,7 +22,7 @@ def load_builder(extension):
 
 class Builders(unittest.TestCase):
     def test_rejects_unknown_content_and_wrong_length_for_each_component(self):
-        for extension in ('dmr1', 'dmr2'):
+        for extension in ('dmr1', 'dmr2', 'dmr3'):
             builder = load_builder(extension)
             for component, (length, _) in builder.STOCK.items():
                 for size in (length, length - 1):
@@ -34,7 +34,7 @@ class Builders(unittest.TestCase):
                                 builder.checked_input(image, component)
 
     def test_unknown_input_refuses_before_compilation_and_export(self):
-        for extension in ('dmr1', 'dmr2'):
+        for extension in ('dmr1', 'dmr2', 'dmr3'):
             with self.subTest(extension=extension), tempfile.TemporaryDirectory() as tmp:
                 builder = load_builder(extension)
                 image = Path(tmp) / 'unknown.bin'
@@ -47,7 +47,7 @@ class Builders(unittest.TestCase):
                 self.assertFalse(output.exists())
 
     def test_failed_toolchain_leaves_no_export_or_temporary_files(self):
-        for extension in ('dmr1', 'dmr2'):
+        for extension in ('dmr1', 'dmr2', 'dmr3'):
             with self.subTest(extension=extension), tempfile.TemporaryDirectory() as tmp:
                 builder = load_builder(extension)
                 output = Path(tmp) / 'output'
@@ -61,7 +61,7 @@ class Builders(unittest.TestCase):
                 self.assertEqual(list(Path(tmp).iterdir()), [])
 
     def test_target_metadata_agrees_with_builders(self):
-        for extension in ('dmr1', 'dmr2'):
+        for extension in ('dmr1', 'dmr2', 'dmr3'):
             with self.subTest(extension=extension):
                 builder = load_builder(extension)
                 target = json.loads(

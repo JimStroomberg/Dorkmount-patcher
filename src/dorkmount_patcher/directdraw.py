@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0-only
-"""DMR1/DMR2 volatile pixel sender, extracted from the tested Dorkmount controller.
+"""DMR1/DMR2/DMR3 volatile pixel sender, with explicitly known capabilities.
 
 The exchange callable owns QLink session, sequence, CRC and device-status checks.
 This module also runs against original firmware instructions in the offline model.
@@ -13,11 +13,13 @@ from contextlib import contextmanager
 
 MAGIC = b"DMR\x01"
 NAV_MAGIC = b"DMR\x02"
+DASHBOARD_MAGIC = b"DMR\x03"
 COMMAND = (0x21, 0)
 WIDTH, HEIGHT = 320, 240
 _FEATURES = {
     MAGIC: ("dock_directdraw",),
     NAV_MAGIC: ("dock_directdraw", "dock_navigation"),
+    DASHBOARD_MAGIC: ("dock_directdraw", "dock_navigation", "dashboard_view"),
 }
 
 
@@ -38,9 +40,9 @@ class Client:
         return response
 
     def capabilities(self):
-        """Refresh the known DMR version and its features, independently of Clock.
+        """Refresh the known DMR version and features, independently of selection.
 
-        DMR1/DMR2 carry a version, not feature flags. Only explicitly supported
+        DMR1/DMR2/DMR3 carry a version, not feature flags. Only explicitly supported
         contracts are mapped here; a higher number never implies compatibility.
         A failed refresh revokes cached drawing/navigation permission.
         """
@@ -84,7 +86,7 @@ class Client:
     def draw(self, operation, x, y, width, height, data):
         self.bounds(x, y, width, height)
         if not self.selected:
-            raise IOError("Verify DirectDraw support and select Clock on the Dock before drawing")
+            raise IOError("Verify DirectDraw support and select Dashboard (Clock on older patches)")
         payload = MAGIC + bytes((operation,)) + struct.pack("<4H", x, y, width, height) + data
         if self.request(payload) != b"":
             raise IOError("Unexpected DMR1 drawing acknowledgment")

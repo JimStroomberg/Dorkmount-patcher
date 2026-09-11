@@ -11,16 +11,17 @@ Debian 13 and needs glibc 2.41+ and the desktop's graphics/C++ runtime libraries
 If keyboard access is denied, choose Set up USB access. Your desktop asks for
 your administrator password once. Reconnect the keyboard afterward.
 
-This preview has been tested without a physical keyboard. Its new installer
-still needs a real-keyboard trial. A failed firmware update can make the keyboard
+Both this Dashboard firmware candidate and its native installer still need a
+real-keyboard trial. A failed firmware update can make the keyboard
 unusable. Do not unplug it, let the computer sleep or close the app mid-update.
 
 The app downloads the supported official firmware and prepares your update
 locally. You do not need Python, a compiler, Dorkmount or IO Center installed.
 Internet access is needed the first time firmware files are prepared.
 
-After successful installation, close the updater, open a compatible application
-and select Clock on the keyboard screen. Double-click Menu to leave that view.
+After successful installation, close the updater and select the dashboard icon
+on the keyboard screen. Waiting… appears until a DMR3-compatible application
+starts drawing. Older companions may need an update. Double-click Menu to leave.
 
 To explore the interface without any keyboard access:
     ./Dorkmount-patcher --demo
