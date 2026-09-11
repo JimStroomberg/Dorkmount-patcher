@@ -1,0 +1,7 @@
+#!/bin/sh
+set -eu
+if [ -S /run/udev/control ]; then
+    udevadm control --reload-rules
+fi
+# Keep user-owned restoration files and journals.
+exit 0

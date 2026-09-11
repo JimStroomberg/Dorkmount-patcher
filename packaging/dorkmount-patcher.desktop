@@ -1,0 +1,15 @@
+[Desktop Entry]
+Type=Application
+Name=Dorkmount Patcher
+GenericName=Keyboard Screen Updater
+Comment=Add custom app support to your Dark Mount screen
+Exec=dorkmount-patcher
+Icon=io.github.JimStroomberg.DorkmountPatcher
+Terminal=false
+Categories=Utility;
+StartupNotify=true
+Actions=Demo;
+
+[Desktop Action Demo]
+Name=Explore without a keyboard
+Exec=dorkmount-patcher --demo

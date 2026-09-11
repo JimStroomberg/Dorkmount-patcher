@@ -1,0 +1,7 @@
+#!/bin/sh
+set -eu
+# A normal desktop reloads the new rule. No device is opened or flashed.
+if [ "$1" = configure ] && [ -S /run/udev/control ]; then
+    udevadm control --reload-rules
+fi
+exit 0

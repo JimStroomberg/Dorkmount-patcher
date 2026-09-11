@@ -1,0 +1,27 @@
+name: Bug report
+description: Report an app, installation, or protocol problem without private firmware or logs.
+body:
+  - type: markdown
+    attributes:
+      value: >-
+        If an update failed, keep the keyboard connected and follow docs/TESTING.md.
+        Do not attach firmware, full session folders, serial numbers, or captures.
+  - type: input
+    id: version
+    attributes:
+      label: App version and operating system
+      placeholder: 'Example: 0.2.0a1, Ubuntu 26.04, Wayland'
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What happened, and what did you expect?
+      description: Include reproduction steps and the stage shown by the app.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Relevant error text and checks performed
+      description: Share reviewed excerpts only. State whether the keyboard returned in normal mode.

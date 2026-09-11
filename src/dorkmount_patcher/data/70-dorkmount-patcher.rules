@@ -1,0 +1,7 @@
+# Only the Dark Mount vendor interface, for the active local desktop user.
+# Normal keyboard input interfaces are not granted access.
+SUBSYSTEM!="hidraw", GOTO="dorkmount_patcher_end"
+ATTRS{idVendor}=="373f", ATTRS{idProduct}=="0001", ENV{.dorkmount_patcher}="1"
+ATTRS{idVendor}=="373f", ATTRS{idProduct}=="0009", ENV{.dorkmount_patcher}="1"
+ENV{.dorkmount_patcher}=="1", ATTRS{bInterfaceNumber}=="02", TAG+="uaccess"
+LABEL="dorkmount_patcher_end"
