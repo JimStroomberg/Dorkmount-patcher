@@ -1,0 +1,16 @@
+{
+  "source_project": "Dorkmount controller prototype",
+  "source_commit": "0cba68db5ffc30387649190cb2b0ec1e94e14f00",
+  "extracted_on": "2026-09-11",
+  "license": "GPL-3.0-only",
+  "unchanged_firmware_files": {
+    "firmware/dmr1/live-draw.c": "61e2f34eb969349918fcaa4d32b007ffb2e203f6b746aabf95eff38a2737e4be",
+    "firmware/dmr1/live-draw-hooks.S": "0433094f2eac94bc15c14442e64f40548c388d7ce7166c6aef346be9569f3892",
+    "firmware/dmr1/live-draw.ld": "50750643c9e9a74d046f4c8b0d239abc0a2f3b650489fcef9fa47bcba50af2f6",
+    "firmware/dmr1/build.py": "aaf501731c006f3cbc372113f01e7f44206214ef267296926894fbbfdd9628c5",
+    "firmware/dmr2/build.py": "2338a41878ab4799ebde6e1199d6f66e228cb728b81963f67d2a2d47b98d0848",
+    "firmware/dmr2/live-draw-hooks.S": "0433094f2eac94bc15c14442e64f40548c388d7ce7166c6aef346be9569f3892",
+    "firmware/dmr2/live-draw.c": "baec28b0c8558258406eef2d70016cb584c03f6c4d404b5c3a58be5b9eac67b6",
+    "firmware/dmr2/live-draw.ld": "50750643c9e9a74d046f4c8b0d239abc0a2f3b650489fcef9fa47bcba50af2f6"
+  }
+}
