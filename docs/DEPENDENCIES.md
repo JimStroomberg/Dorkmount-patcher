@@ -21,7 +21,7 @@ Use a normal graphical desktop with a working GPU/driver stack, active local ses
 Fontconfig also comes from the distribution so its library matches the system's
 font configuration format. The GUI uses the packaged DejaVu Sans font on Linux.
 
-The initial release targets Ubuntu 26.04 and current stable CachyOS on x86-64. New Ubuntu releases need validation. macOS Apple Silicon and Bazzite are Coming soon; Windows is later. The generic Linux archive retains the same system requirements but does not install dependencies or rules automatically.
+CachyOS x86-64 has maintainer-confirmed hardware results. Ubuntu 26.04 x86-64 has package/container coverage; real-machine verification remains pending. New Ubuntu releases need validation. macOS Apple Silicon and Bazzite are Coming soon; Windows is later. The generic Linux archive retains the same system requirements but does not install dependencies or rules automatically.
 
 ## Running from source on other distributions
 

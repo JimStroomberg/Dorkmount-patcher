@@ -1,43 +1,67 @@
 # Contributing
 
-Dorkmount-patcher owns firmware source, exact-image patching, the Linux updater UI/transport, and the application-neutral DirectDraw reference client. Dashboard layouts, sensors, widgets and companion-app integration belong to Dorkmount or other clients.
+Bug reports, documentation fixes and code contributions are welcome.
+This repository contains the keyboard patcher and DirectDraw reference client.
+Widgets and companion-app features belong in
+[Dorkmount](https://github.com/JimStroomberg/Dorkmount), which is coming soon,
+or another compatible app.
 
-## Workflow and pull requests
+## Getting started
 
-1. Branch from current `main` using a short descriptive name, such as `fix/usb-access-message`, `feat/developer-example`, or `build/package-checks`.
-2. Keep each PR focused on one problem. Open a draft early if the approach needs discussion. Fork-based PRs are welcome once the repository is public.
-3. Run `make setup`, `make doctor` and `make check`. For packaging/dependency changes also run `make package` and `make package-test`; the CI package job uses the same scripts. See [BUILDING.md](docs/BUILDING.md) and [DEPENDENCIES.md](docs/DEPENDENCIES.md).
-4. Open the PR against `main` and use the supplied template. Explain the concrete problem, resulting behaviour, validation actually performed, and any meaningful firmware/recovery impact. Use a specific imperative title such as **Fix keyboard detection after reconnect**. The title and description must describe the final change, including after scope changes.
-5. Resolve review conversations and wait for **Required checks**. The maintainer reviews the final diff and merges by squash. Request a second reviewer when one is available; the sole maintainer can review and merge their own PR. Do not bypass checks or force-push `main`.
+See [Building](docs/BUILDING.md) for setup and [Dependencies](docs/DEPENDENCIES.md)
+for the required libraries. For a larger change, opening an issue first is a good
+way to discuss the approach before spending time on it.
 
-A useful small PR description can be brief:
+Fork the repository and create a branch from `main`. Keep each pull request
+focused on one improvement; draft PRs are welcome while work is in progress.
 
-> The app currently reports a missing keyboard when USB access is denied. Show an access explanation and a setup action instead, so the user can resolve it before preparing firmware.
+Before submitting code, run `make doctor` and `make check`. Packaging or dependency
+changes also need `make package` and `make package-test`. For documentation-only
+changes, check the wording, links and `git diff --check`.
+
+## Pull requests
+
+Use a descriptive title, such as **Fix keyboard detection after reconnect**.
+Explain the problem, what changes and how you checked it. Add a screenshot for
+visible UI changes and mention any effect on installation or restoration.
+Small changes can have short descriptions.
+
+For example:
+
+> USB permission errors currently look like a missing keyboard. Show an access
+> explanation and the setup button so users can resolve the problem.
 >
-> Validation: permission-denied simulation passes, `make check` passes, and the demo was reviewed visually. No firmware bytes or update commands change. Physical USB behaviour has not been tested.
+> Checked with the permission-denied test and a demo screenshot. Firmware and
+> update commands are unchanged.
 
-Include before/after images for visible UI changes when useful. Keep screenshots free of personal data. Distinguish simulations, package installation checks and physical hardware evidence; do not list checks that were not run. New tests should protect meaningful behaviour or failure handling, not merely repeat implementation details. Documentation-only changes need link/content and whitespace checks, not artificial unit tests.
+Open the PR against `main` and use the template as a starting point. The maintainer
+reviews the change after **Required checks** passes and merges by squash. Releases
+use version tags; see [Releasing](docs/RELEASING.md).
 
-All release work also goes through a PR. `main` contains reviewed development; alpha and stable channels are selected by immutable version tags. See [RELEASING.md](docs/RELEASING.md) for versions, CI, package contents and publishing. Mac Apple Silicon and Bazzite are Coming soon; current package work targets Ubuntu 26.04 and current stable CachyOS, x86-64.
+## Firmware changes
 
-## Firmware and runtime requirements
+Firmware changes need extra care. Preserve the supported hardware checks,
+verified HTTPS downloads, exact image hashes and transfer bounds. Installation requires the user's confirmation,
+and success requires a fresh check of the keyboard. Keep demo mode separate from
+hardware operations, and preserve stock copies and logs when an update fails.
 
-Qt tests run offscreen. Automated tests never open a real keyboard. Firmware behaviour changes also require original-instruction/emulation validation and a separately authorized hardware experiment. Synthetic tests cannot establish hardware safety.
+The DMR1/DMR2 builders are preserved reference versions. Follow
+[the firmware build instructions](docs/BUILDING.md#rebuild-the-firmware-extension)
+for DMR3 changes, including payload generation and the instruction checker.
+Describe hardware tests separately from simulations, with the version, operating
+system and results. [Testing](docs/TESTING.md) has the keyboard checklist.
 
-DMR1/DMR2 builders are preserved unchanged. Reproduce DMR2 with the documented LLVM toolchain and user-supplied stock files, then run `python3 tools/generate_payload.py <verified-build-directory>` to regenerate the compiler-free patch data. This checks complete hashes, preimages and all changed-byte ranges before exporting only replacement patches. For DMR3, use `firmware/dmr3/build.py` and pass `--extension dmr3` to the generator. Run the original-instruction checker described in [BUILDING.md](docs/BUILDING.md#rebuild-the-firmware-extension) against the exact candidate; record its limits and pending hardware checks. Both generation and runtime patching must retain full input/output hash checks, lengths and range guards.
+## Documentation and shared files
 
-Use Context7 for current library API guidance and official registries/release notes for exact versions. Desktop/build dependency versions are pinned in `packaging/requirements-build.txt`; base/test containers are pinned by digest. Use `make package` for the same Linux container build used by GitHub Actions. No keyboard device is exposed to the build.
+The [developer guide](docs/DEVELOPERS.md) defines the drawing protocol.
+When changing it, also update `src/dorkmount_patcher/data/developers.md`, the copy
+shown in the app. Tests check that they match. Installation help belongs in
+[Installing](docs/INSTALLING.md) and [Troubleshooting](docs/TROUBLESHOOTING.md).
 
-## Public and private material
+Keep downloaded or patched firmware, device captures, credentials and personal
+notes out of commits. The ignored `.local/` directory is available for local work.
+Check screenshots and log excerpts for personal information before sharing them.
+Record the source and license of borrowed code or artwork; see
+[Provenance](docs/PROVENANCE.md) and [third-party notices](THIRD_PARTY.md).
 
-Keep personal plans, test logs, downloaded vendor files, original-code research and local environment notes in ignored `.local/` or the private lab. Public docs must stand alone and must not contain absolute workstation paths. Inspect source archives, wheels and desktop bundles before distribution; `.gitignore` alone does not control package contents. `MANIFEST.in`, package-data rules and `.dockerignore` also enforce this boundary.
-
-The UI must preserve an explicit final install action, block closing while work is active, separate demo from real operations, and never report success without fresh device verification. Update requests are never automatically retried. A failed attempt must retain its local journal and stock copies.
-
-When changing `docs/DEVELOPERS.md`, copy it to `src/dorkmount_patcher/data/developers.md` for the app's offline guide. A test enforces equality. The bundled guide must remain useful before any repository publication.
-
-Do not commit manufacturer images, patched full images, extracted proprietary routines, captures, device serials, photographs, credentials or machine inventories. Public source includes original project code, compatibility hashes, addresses and short instruction checks used by the patcher. Record the origin of new code and evidence. The project is not a clean-room implementation; see [provenance](docs/PROVENANCE.md).
-
-Keep changes specific to an identified hardware revision and exact firmware set. Changing the official version string is not a capability check. Do not broaden support on the basis of version numbers alone.
-
-The repository remains private until the maintainer explicitly chooses publication. Release preparation must include provenance review and a usable installation/restoration procedure; do not attach generated full firmware images to releases.
+Please report security problems privately as described in [SECURITY.md](SECURITY.md).

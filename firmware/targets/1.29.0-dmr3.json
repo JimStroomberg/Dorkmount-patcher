@@ -143,5 +143,6 @@
   "builder": "firmware/dmr3/build.py",
   "toolchain": "Clang/LLD/llvm-objcopy 22.1.8",
   "flashing_included": false,
-  "hardware_verified": false
+  "hardware_verified": false,
+  "hardware_verification_note": "Offline-generated metadata; see docs/VALIDATION.md for separate maintainer-reported CachyOS hardware acceptance."
 }

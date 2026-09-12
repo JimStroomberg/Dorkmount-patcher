@@ -1,8 +1,10 @@
 # Update transport implemented by the Linux preview
 
 This is the new native installer's protocol contract, not a recovery guarantee.
-The preceding physical experiments used the official Web updater. This native
-implementation must still be tested against a real keyboard.
+Earlier experiments used the official Web updater. The native implementation
+now has maintainer-confirmed CachyOS installation/restoration results; Ubuntu
+real-machine verification and universal recovery remain unestablished. See
+[VALIDATION.md](VALIDATION.md).
 
 The protocol was checked against the official
 [IO Center Web application](https://iocenter.bequiet.com/) on 2026-09-11 and the
@@ -89,8 +91,8 @@ it. The interface never labels an uncertain update successful and disables its
 retry button after an install failure. Follow [TESTING.md](TESTING.md) for the
 hardware trial and failure evidence.
 
-Known gaps: real bootloader acceptance/timing of this native implementation,
-interruption recovery, nonbooting-device recovery, full configuration backups,
+Known gaps: Ubuntu real-machine verification, exhaustive bootloader timing and
+interruption coverage, nonbooting-device recovery, full configuration backups,
 independent post-flash firmware readback, other hardware revisions and other OS
 adapters. Exact-byte transfer plus device validation and a fresh capability probe
 are the available verification; they are not complete firmware attestation.

@@ -1,6 +1,9 @@
 # Build and develop
 
-End users should download a native package from [Releases](https://github.com/JimStroomberg/Dorkmount-patcher/releases). These instructions are for contributors and other Linux distributions. Source availability does not establish hardware or distribution support.
+For native packages, follow [installation and restoration](INSTALLING.md). These
+instructions are for contributors and other Linux distributions. Dorkmount
+Patcher prepares the keyboard; Dorkmount, the separate widget app, is coming soon.
+Source availability does not establish hardware or distribution support.
 
 ## Run from source
 

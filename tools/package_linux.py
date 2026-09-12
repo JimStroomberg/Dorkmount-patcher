@@ -87,6 +87,7 @@ def build(bundle, output):
         "source_date_epoch": os.environ.get("SOURCE_DATE_EPOCH", ""),
         "platforms": platforms,
         "hardware_verified": False,
+        "hardware_verification_note": "This build has no physical acceptance result; see docs/VALIDATION.md for prior platform evidence.",
     }, indent=2) + "\n")
 
 

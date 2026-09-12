@@ -6,7 +6,9 @@ Nothing in the protocol requires Dorkmount, Qt, MangoHud or a particular operati
 system. The reference connection adapter currently supports Linux.
 
 The keyboard needs a supported DMR1, DMR2 or DMR3 firmware extension. DMR3 is the
-current development candidate and **has not been tested on real hardware**.
+current extension. The maintainer has confirmed the native update and Dashboard
+workflow on CachyOS; Ubuntu 26.04 real-machine verification is pending. See
+[validation](https://github.com/JimStroomberg/Dorkmount-patcher/blob/main/docs/VALIDATION.md).
 On stock firmware, custom Dock graphics are unavailable. DMR3 replaces the Clock
 tile with a **Dashboard icon** and opens directly to **Waiting...**, without the
 clock/timer/stopwatch submenu. DMR1/DMR2 still use the Clock tile.

@@ -1,35 +1,31 @@
-Dorkmount screen updater — Linux test release
+Dorkmount Patcher — Linux alpha
 
-For a current Linux x86-64 desktop (including CachyOS). The bundle is built on
-Debian 13 and needs glibc 2.41+ and the desktop's graphics/C++ runtime libraries.
+This app only patches your keyboard. It does not include widgets.
+Dorkmount, the separate widget app, is coming soon.
 
-1. Extract the entire archive to a folder in your home directory.
-2. Open that folder and run Dorkmount-patcher.
-3. Close other keyboard apps and connect the keyboard, screen and number pad.
-4. Follow Check keyboard → Prepare update → Install → Verify.
+CachyOS x86-64: installation, restoration and Dashboard confirmed on the test
+keyboard. Ubuntu 26.04 x86-64: package checks pass; real-machine testing pending.
+The portable bundle needs glibc 2.41+ and the graphics/C++ libraries listed in
+docs/DEPENDENCIES.md. Native packages install their declared dependencies.
 
-If keyboard access is denied, choose Set up USB access. Your desktop asks for
-your administrator password once. Reconnect the keyboard afterward.
+1. Extract the entire archive and run Dorkmount-patcher.
+2. Close other keyboard apps and connect the keyboard, screen and number pad.
+3. Follow Check keyboard → Prepare update → Install Dashboard → Verify.
+4. Close the updater, select Dashboard on the keyboard and start a compatible
+   widget app. Waiting… remains until drawing starts. Double-click Menu to leave.
 
-Both this Dashboard firmware candidate and its native installer still need a
-real-keyboard trial. A failed firmware update can make the keyboard
-unusable. Do not unplug it, let the computer sleep or close the app mid-update.
+If access is denied, use Set up USB access and reconnect after the password prompt.
+Do not run the app as root. The app downloads the supported official firmware and
+prepares it locally; no Python setup, compiler or companion is needed for patching.
 
-The app downloads the supported official firmware and prepares your update
-locally. You do not need Python, a compiler, Dorkmount or IO Center installed.
-Internet access is needed the first time firmware files are prepared.
+Keep power and cables connected during updates. If an update stops, preserve the
+session and consult docs/TROUBLESHOOTING.md before attempting another operation.
 
-After successful installation, close the updater and select the dashboard icon
-on the keyboard screen. Waiting… appears until a DMR3-compatible application
-starts drawing. Older companions may need an update. Double-click Menu to leave.
-
-To explore the interface without any keyboard access:
-    ./Dorkmount-patcher --demo
-
-Testing and trouble recovery: docs/TESTING.md
+Installation and stock restoration: docs/INSTALLING.md
+Troubleshooting: docs/TROUBLESHOOTING.md
 Developer guide: docs/DEVELOPERS.md
-The reference examples need a separate Python environment; the updater does not.
+To preview without keyboard access: ./Dorkmount-patcher --demo
 
-All downloaded firmware and update records remain in your personal local state
-directory (normally ~/.local/state/dorkmount-patcher). Do not upload that folder
-or full firmware images to GitHub. Uninstalling the app does not delete them.
+Full firmware and session records stay in your local state directory, normally
+~/.local/state/dorkmount-patcher. Please keep that folder private. Uninstalling
+the app does not remove those files or restore the keyboard's original firmware.

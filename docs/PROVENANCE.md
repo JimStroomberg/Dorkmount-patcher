@@ -14,4 +14,4 @@ The DMR3 instruction checker adapts the project-owned LCD/GPIO emulator from the
 
 The new update state machine implements observed protocol facts from the official Web updater and recorded experiments. No manufacturer JavaScript is copied into the project. `directdraw.py` retains the controller's original GPL sender, with a standalone connection helper. The new desktop workflow, simulator, tests and documentation are original project additions. Local research material stays ignored and outside package contents.
 
-The manufacturer retains rights in its firmware. The project license applies to project source, not to user-supplied firmware or a full image assembled from it. Generated images and restoration copies stay local. A public release still needs a final provenance/distribution review and must not publish research artifacts or firmware binaries.
+The manufacturer retains rights in its firmware. The project license applies to project source, not to user-supplied firmware or a full image assembled from it. Generated images and restoration copies stay local.

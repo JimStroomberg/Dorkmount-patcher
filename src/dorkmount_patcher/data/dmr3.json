@@ -172,6 +172,7 @@
   "toolchain": "Clang/LLD/llvm-objcopy 22.1.8",
   "flashing_included": true,
   "hardware_verified": false,
+  "hardware_verification_note": "Offline-generated metadata; see docs/VALIDATION.md for separate maintainer-reported CachyOS hardware acceptance.",
   "source_sha256": {
     "firmware/dmr3/build.py": "557759957978dc2443e3371d0cc58ab327178ffaab476e147314080d3b6176a6",
     "firmware/dmr3/dashboard.c": "2367aaf62afbd05c65dd0bf2e83b76feb8feea74aa07445ed8129891de69fbd1",

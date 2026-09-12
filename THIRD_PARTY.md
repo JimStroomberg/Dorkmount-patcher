@@ -34,6 +34,19 @@ It includes no original Clock routine or full firmware image. The generator
 verifies exact complete image hashes and all patch ranges before exporting it.
 Source hashes and both preimage/replacement hashes are included for reproduction.
 
+DMR3 adds 616 replacement bytes in `src/dorkmount_patcher/data/dmr3.json`, built
+from the project-owned C/assembly/linker sources in `firmware/dmr3/`. This includes
+original Dashboard monitor/bar-chart artwork, waiting-view hooks and the drawing
+endpoint. Two trampolines replay four-byte vendor function prologues before
+returning to unchanged code; no complete vendor routine or image is distributed.
+DMR1/DMR2 source and payloads remain unchanged.
+
+The optional original-instruction checker reuses the project's LCD/GPIO model.
+Unicorn and Capstone are optional contributor dependencies, not included in the
+native app. The Dashboard icon preview is rendered from project-owned firmware
+artwork. Desktop screenshots show the project's own app using synthetic demo
+state; they are not photographs or evidence of a physical hardware test.
+
 ## Desktop dependencies
 
 The optional desktop uses unmodified PySide6 (Qt for Python), distributed under

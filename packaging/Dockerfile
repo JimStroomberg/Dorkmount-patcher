@@ -21,7 +21,7 @@ RUN python tools/release_metadata.py \
     && mkdir /bundle \
     && cp -a dist/Dorkmount-patcher/. /bundle/ \
     && rm -f /bundle/_internal/libstdc++.so.6 /bundle/_internal/libgcc_s.so.1 /bundle/_internal/libfontconfig.so.1 \
-    && cp -a docs examples LICENSE THIRD_PARTY.md /bundle/ \
+    && cp -a docs examples LICENSE THIRD_PARTY.md SECURITY.md /bundle/ \
     && python tools/bundle_notices.py /bundle/third-party-licenses \
     && cp packaging/START-HERE.txt /bundle/START-HERE.txt \
     && QT_QPA_PLATFORM=offscreen /bundle/Dorkmount-patcher --demo --screenshot /tmp/bundle-smoke.png \

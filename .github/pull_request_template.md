@@ -1,24 +1,17 @@
-## Problem and resulting behaviour
+## What changed?
 
-<!-- Explain the concrete problem and how the app behaves after this change.
-Use an imperative title, e.g. "Explain missing USB access before installation".
-Remove instructions and sections that do not apply; keep the validation evidence. -->
+<!-- Explain the problem and your solution. A few sentences are enough for a
+small change. Remove sections that do not apply. -->
 
-## Validation
+## How was it checked?
 
-<!-- List checks actually run and their results. For UI work add before/after
-screenshots without personal details. Label hardware tests separately from
-simulations, with app/firmware versions and OS. Never attach firmware or journals. -->
+<!-- Include test results and a screenshot if the UI changed. For keyboard tests,
+include the app/firmware versions and OS; distinguish them from simulations. -->
 
-## Firmware, recovery and user impact
+## Firmware or installation changes
 
-<!-- State whether firmware bytes, USB commands, update ordering, permissions,
-or restoration change. For meaningful changes explain failure behaviour and
-recovery limits. If none apply, say so in one sentence. -->
+<!-- If affected, describe changes to firmware, USB commands, permissions or
+restoration, including how failures are handled. -->
 
-## Readiness
-
-- [ ] The title and description describe the final change.
-- [ ] Relevant tests and documentation are updated; CI passes.
-- [ ] No private research, full firmware, credentials or device captures are included.
-- [ ] Unverified hardware behaviour is clearly identified.
+<!-- Please leave firmware files, full update logs and personal information out
+of attachments. See CONTRIBUTING.md for the workflow. -->

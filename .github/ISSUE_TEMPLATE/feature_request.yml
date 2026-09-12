@@ -12,4 +12,4 @@ body:
     id: proposal
     attributes:
       label: Proposed change
-      description: Add relevant platform or protocol details. Keep private research local.
+      description: How would you like it to work? Examples or sketches are welcome.
