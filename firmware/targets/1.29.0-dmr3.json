@@ -1,0 +1,148 @@
+{
+  "schema": 1,
+  "id": "darkmount-1.29.0-dmr3",
+  "extension": "DMR3",
+  "hardware": {
+    "model": 1,
+    "revision": 1,
+    "usb_vendor": "373f",
+    "usb_product": "0001"
+  },
+  "official_version": "1.29.0",
+  "components": {
+    "main": {
+      "stock_filename": "MCU0_1.29.0.0.bin",
+      "size": 85508,
+      "stock_sha256": "94d6927103b1a0bdbe8a214e90fb7f0bcc4f891a546ada8f63d0f0d2869c5b70",
+      "patched_sha256": "23fa16e4e5bc0fbc520bdfadc35e3d3d2e2cbbdd45ee34651336ce647a421c02"
+    },
+    "dock": {
+      "stock_filename": "MCU1_MMD_1.29.0.0.bin",
+      "size": 81000,
+      "stock_sha256": "d2cbc938269e9c2272c3667320c625cdd418f0dda7e079050c45dbc1f6ebb0df",
+      "patched_sha256": "8aadce6d0e2f89cbd9d9db08c26dac4d16a4ad55f1a0c1e18f589ee228ad2c1d"
+    },
+    "numpad": {
+      "stock_filename": "MCU2_NPD_1.29.0.0.bin",
+      "size": 325200,
+      "stock_sha256": "12a57913e1a3bf4ecddd95a4877d93fbd5fa9b8c9ece988f535f5e81500baf1d",
+      "patched_sha256": "12a57913e1a3bf4ecddd95a4877d93fbd5fa9b8c9ece988f535f5e81500baf1d"
+    }
+  },
+  "patches": [
+    {
+      "component": "dock",
+      "offset": 13968,
+      "length": 4,
+      "purpose": "Replace Clock tile when selected or unselected",
+      "original_sha256": "f4ff6093dac86792e8d45d4686af2eae2524e32816bf5046d663bfab9bf28d3e",
+      "section": ".crop_hook"
+    },
+    {
+      "component": "dock",
+      "offset": 14314,
+      "length": 12,
+      "purpose": "Enter Dashboard instead of Clock submenu",
+      "original_sha256": "dea10d7177204f9b3fe8a1236bc57c325288cad3dcd5156b370fac5c1774d989",
+      "section": ".app_entry"
+    },
+    {
+      "component": "dock",
+      "offset": 14328,
+      "length": 36,
+      "purpose": "Replace Clock tile after full menu redraw",
+      "original_sha256": "065898204db5860f01089ff285902423350a399096a9b00f4d7a0e2e70729582",
+      "section": ".image"
+    },
+    {
+      "component": "dock",
+      "offset": 14648,
+      "length": 4,
+      "purpose": "Disable stopwatch rendering",
+      "original_sha256": "cbae1f9729348b102e6104082148ed095f495a7856bf191ec7910bf5fc9e6f24",
+      "section": ".stopwatch_entry"
+    },
+    {
+      "component": "dock",
+      "offset": 14652,
+      "length": 55,
+      "purpose": "Draw waiting screen on entry",
+      "original_sha256": "7734e865f2b17a6f4c955407c4e83274e3a18c27b6c94eda9df2b89c6f5a8978",
+      "section": ".waiting"
+    },
+    {
+      "component": "dock",
+      "offset": 14944,
+      "length": 4,
+      "purpose": "Disable periodic Clock drawing",
+      "original_sha256": "32259f888cf16760aec2fe831960c9b8495efc3494bba92af65a4a7cee87a930",
+      "section": ".clock_entry"
+    },
+    {
+      "component": "dock",
+      "offset": 14948,
+      "length": 276,
+      "purpose": "DMR3 drawing endpoint",
+      "original_sha256": "56b248ff6958cb145228ce0354bfaa236814aec4cc88be4f2a76df6bc90a1691",
+      "section": ".draw"
+    },
+    {
+      "component": "dock",
+      "offset": 17520,
+      "length": 4,
+      "purpose": "Disable timer editor and retain normal dial behaviour",
+      "original_sha256": "6c272f8d7dcefd99b55c6521f00d6fa8f03f10430e481e2c8e3a750a97bb65f4",
+      "section": ".timer_entry"
+    },
+    {
+      "component": "dock",
+      "offset": 17524,
+      "length": 208,
+      "purpose": "Dashboard artwork and original-renderer trampolines",
+      "original_sha256": "9eac9c699f90302525ad75ab9a37db0a8f314063d36e04c0539b5ce96f97bccd",
+      "section": ".dashboard"
+    },
+    {
+      "component": "dock",
+      "offset": 20940,
+      "length": 4,
+      "purpose": "Wrap full image renderer",
+      "original_sha256": "502081bcfd603ab4663614073a81045ae7de9c7265362a5962f44317def31580",
+      "section": ".image_hook"
+    },
+    {
+      "component": "dock",
+      "offset": 24664,
+      "length": 4,
+      "purpose": "Route custom drawing commands",
+      "original_sha256": "c6b198b608a0d7d8507a7778b4e65b3cfa55a6b9965aefbaf4c63f851c4736e0",
+      "section": ".dispatch_hook"
+    },
+    {
+      "component": "dock",
+      "offset": 20192,
+      "length": 2,
+      "purpose": "Forward Dashboard Left/Right",
+      "original_sha256": "f2f4c11e8e9e74cde05751f784f2f4493cd4d7265ec37844cd32dfc66cc34873"
+    },
+    {
+      "component": "dock",
+      "offset": 14152,
+      "length": 2,
+      "purpose": "Ignore Dashboard single-click",
+      "original_sha256": "1c972398125398a3665f212930758ae9518a8c948adbccca6753f11525730591"
+    },
+    {
+      "component": "main",
+      "offset": 34276,
+      "length": 1,
+      "purpose": "Forward custom Dock command zero",
+      "original_sha256": "bbeebd879e1dff6918546dc0c179fdde505f2a21591c9a9c96e36b054ec5af83"
+    }
+  ],
+  "builder": "firmware/dmr3/build.py",
+  "toolchain": "Clang/LLD/llvm-objcopy 22.1.8",
+  "flashing_included": false,
+  "hardware_verified": false,
+  "hardware_verification_note": "Offline-generated metadata; see docs/VALIDATION.md for separate maintainer-reported CachyOS hardware acceptance."
+}

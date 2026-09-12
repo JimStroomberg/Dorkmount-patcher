@@ -1,8 +1,10 @@
 # Update transport implemented by the Linux preview
 
 This is the new native installer's protocol contract, not a recovery guarantee.
-The preceding physical experiments used the official Web updater. This native
-implementation must still be tested against a real keyboard.
+Earlier experiments used the official Web updater. The native implementation
+now has maintainer-confirmed CachyOS installation/restoration results; Ubuntu
+real-machine verification and universal recovery remain unestablished. See
+[VALIDATION.md](VALIDATION.md).
 
 The protocol was checked against the official
 [IO Center Web application](https://iocenter.bequiet.com/) on 2026-09-11 and the
@@ -68,8 +70,9 @@ validations. Commit requires both Ready ACK and completion. Commit has a
 It is never resent if either its ACK or completion is lost.
 
 After completion the engine waits up to 60 seconds for normal USB return, opens
-a fresh session and verifies model/revision/all three versions. DMR2 installation
-also requires the exact DMR2 capabilities. A stock restoration expects the DMR
+a fresh session and verifies model/revision/all three versions. A DMR installation
+also requires capabilities matching the prepared package exactly: DMR3 for the
+Dashboard candidate, DMR2 for the preserved legacy target. A stock restoration expects the DMR
 endpoint to be absent and rechecks normal identity if the query times out.
 No screen test pattern is sent automatically as part of installation.
 
@@ -88,8 +91,8 @@ it. The interface never labels an uncertain update successful and disables its
 retry button after an install failure. Follow [TESTING.md](TESTING.md) for the
 hardware trial and failure evidence.
 
-Known gaps: real bootloader acceptance/timing of this native implementation,
-interruption recovery, nonbooting-device recovery, full configuration backups,
+Known gaps: Ubuntu real-machine verification, exhaustive bootloader timing and
+interruption coverage, nonbooting-device recovery, full configuration backups,
 independent post-flash firmware readback, other hardware revisions and other OS
 adapters. Exact-byte transfer plus device validation and a fresh capability probe
 are the available verification; they are not complete firmware attestation.

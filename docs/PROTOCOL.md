@@ -1,33 +1,44 @@
-# DMR volatile graphics and navigation
+# Firmware implementation notes
 
-For a self-contained implementation guide, including the complete QLink envelope,
-session handshake, packet examples and a runnable client, start with
-[DEVELOPERS.md](DEVELOPERS.md). The low-level DMR contract below is unchanged.
+[DEVELOPERS.md](DEVELOPERS.md) is the canonical DirectDraw protocol reference:
+framing, sessions, capability layouts, drawing bounds, acknowledgments,
+feature/version detection, frame lifecycle and navigation. The updater transport
+is separate and documented in [UPDATER-PROTOCOL.md](UPDATER-PROTOCOL.md).
+This page retains firmware-specific details without duplicating those contracts.
 
-Transport uses the upstream QLink session, sequence, CRC16/MODBUS and status checks. Vendor HID is discovered by the normal USB identity `373f:0001` and report-descriptor prefix `0600ff0901a101`. One process must own the command session and sequence stream. The Dorkmount reference controller coordinates its instances with an advisory lock. Other vendor-control programs must be closed.
+## Exact image boundary
 
-A read-only `03/01` model/revision/version query must confirm the supported baseline before the graphics command is enabled. It does not query a serial number.
+These addresses apply only to the pinned 1.29.0 images in
+[FIRMWARE.md](FIRMWARE.md). The Main routing byte at `0x0800f9e4` changes from
+`5a` to `38`. DMR overlays the Clock renderer entry at `0x08009a60` and the
+custom dispatcher call at `0x0800c058`. DMR1 uses a 296-byte handler at
+`0x08009a64`; DMR2's handler is 288 bytes. DMR3 reuses additional bounded Clock
+regions for Dashboard entry, artwork and wrappers; its target manifest lists
+all extents and preimages.
 
-All graphics requests use feature/command `21/00`, a single unfragmented 64-byte QLink report, and payload prefix `44 4d 52 01` (`DMR` + version byte 1). Fields are little-endian. The payload limit is 55 bytes.
+DMR1 requires selected view `0x200000f2 == 1` and Clock-ready flag
+`0x200000dc == 1`. DMR2/DMR3 require only selected view 1. They use the existing
+receive/reply buffers and LCD routines, with no new global RAM or framebuffer.
+Nonzero commands in feature `21` retain the original dispatcher.
 
-| Opcode | Request after prefix/opcode | Reply / bound |
-| --- | --- | --- |
-| `00` | No fields | 12-byte capability structure: magic[4], width:u16=320, height:u16=240, max_pixels:u8=21, selected:u8=0/1, max_fill:u16=4096 |
-| `01` | x:u16, y:u16, width:u16, height:u16, color:u16 | Solid RGB565 rectangle, 1..4096 pixels |
-| `02` | x:u16, y:u16, width:u16, height:u16, RGB565 pixels | Exact `2*width*height` bytes, 1..21 pixels |
+## Navigation reuse
 
-All rectangles must fit within 320×240 and have positive extents. RGB565 is transmitted least-significant byte first. Successful drawing returns an empty payload and QLink status zero. Malformed requests return status 3; drawing while Clock is inactive returns status 10. Nonzero commands in feature `21` retain the original dispatcher.
+DMR2/DMR3 Dock scan index 2 (Left) sends link `80/00` payload `03 01`;
+index 4 (Right) sends `03 00`. Existing Main code translates them into the
+CRC-checked, session-specific QLink notifications described in the developer
+guide. Releases do not navigate. The notification format is shared with Profiles
+and has no source/generation tag; the documented rapid leave/re-enter ambiguity
+still applies. Double-click Menu retains the selector transition; single-click
+inside the custom view is ignored.
 
-In DMR1, the active-view predicate is the original selected-view word at `0x200000f2 == 1` and Clock-ready flag at `0x200000dc == 1`. The receiver uses existing RX/TX buffers and bounded stack. Main forwarding changes address `0x0800f9e4` from `5a` to `38`. Dock overlays the Clock entry at `0x08009a60`, a 296-byte handler at `0x08009a64`, and one call at `0x0800c058`. These addresses belong only to the exact images in [FIRMWARE.md](FIRMWARE.md).
+## Dashboard rendering
 
-The Dorkmount reference controller queues the latest complete screen and serializes commands. It advances its diff base only after all acknowledgments. An interrupted or failed transfer invalidates that base; resume/reconnect sends a full screen. There is no persistent storage write, double buffer, atomic swap, lease or guaranteed frame rate. DMR1 has no host navigation; DMR2 uses the existing notification queue described below. The transport can display partially updated frames during a transfer.
+DMR3 replaces the former Clock selector tile through full-image/crop wrappers,
+without rewriting the external image store. Entry clears the display and draws
+Waiting... once. Old Clock-sheet/periodic renders are suppressed, including the
+accent callback. The companion must repaint completely after entry. There is no
+present command, heartbeat or automatic return to Waiting... after a companion stops.
 
-## DMR2 navigation extension
-
-The drawing request prefix remains `DMR\x01`; DMR2 replies to the same capability query with `DMR\x02` and the unchanged 12-byte layout/bounds. New clients accept only those two known magic values. Older strict DMR1 clients refuse DMR2 output. The DMR2 active predicate is selected view `0x200000f2 == 1`, without the Clock-ready subview flag.
-
-Clock scan index 2 (Left) sends the existing Dock link `80/00` payload `03 01`; index 4 (Right) sends `03 00`. Original Main code translates these into CRC-checked, session-specific QLink `11/02` notifications with sequence zero: `79 00 00 08 04` for Left, `80 00 00 08 03` for Right. Releases do not navigate. The host uses the same QLink owner/reader as graphics and drains its bounded pending queue. No second HID reader, input-key capture, profile write or host key injection is used.
-
-Only DMR2 continuously selected Clock periods deliver events to the enabled-view list; events during observed inactive periods and disconnects are discarded. Because this reuses Profiles' notification format and lacks a view-generation tag, a very fast Clock → Profiles → Clock round-trip entirely between capability probes can still misattribute a Profiles press. Normal exit/re-entry pauses, clears pending navigation and repaints. A future event source/generation field would remove this ambiguity.
-
-Changing enabled views or pressing Left/Right modifies host state only. Menu/Select double-click retains the original selector transition; single-click inside the custom Clock container is ignored.
+[Validation](VALIDATION.md) separates original-instruction checks, container
+package checks and maintainer-reported hardware results. These notes do not
+establish support for another firmware image or guarantee recovery.

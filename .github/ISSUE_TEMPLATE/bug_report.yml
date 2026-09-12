@@ -1,16 +1,16 @@
 name: Bug report
-description: Report an app, installation, or protocol problem without private firmware or logs.
+description: Something not working? Tell us what happened.
 body:
   - type: markdown
     attributes:
       value: >-
-        If an update failed, keep the keyboard connected and follow docs/TESTING.md.
-        Do not attach firmware, full session folders, serial numbers, or captures.
+        If an update stopped, keep the keyboard connected and check the Troubleshooting guide linked from the README.
+        Please leave firmware files, full update logs and personal information out of attachments.
   - type: input
     id: version
     attributes:
-      label: App version and operating system
-      placeholder: 'Example: 0.2.0a1, Ubuntu 26.04, Wayland'
+      label: App version, package/build and operating system
+      placeholder: 'Example: 0.2.0a3, CachyOS, Wayland'
     validations:
       required: true
   - type: textarea
@@ -23,5 +23,5 @@ body:
   - type: textarea
     id: evidence
     attributes:
-      label: Relevant error text and checks performed
-      description: Share reviewed excerpts only. State whether the keyboard returned in normal mode.
+      label: Error message and anything you have tried
+      description: Copy the relevant error text and tell us whether the keyboard still works.

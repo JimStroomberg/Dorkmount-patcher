@@ -1,48 +1,67 @@
-# Branches, candidates and releases
+# Releasing
 
-## Branch policy
+`main` contains reviewed work. Use short-lived branches and pull requests for
+changes, and version tags for alpha and stable releases.
 
-`main` holds reviewed work. Use short-lived branches and PRs; there is no permanent `alpha` branch. A version tag selects a particular commit and the release channel:
+## Versions
 
-| Channel | Python/app version | Git tag | Debian version | CachyOS version |
+| Channel | App version | Git tag | Debian version | CachyOS version |
 |---|---|---|---|---|
-| Alpha example | `0.2.0a1` | `v0.2.0-alpha.1` | `0.2.0~alpha1-1` | `0.2.0alpha1-1` |
-| Stable example | `0.2.0` | `v0.2.0` | `0.2.0-1` | `0.2.0-1` |
+| Alpha | `0.2.0a3` | `v0.2.0-alpha.3` | `0.2.0~alpha3-1` | `0.2.0alpha3-1` |
+| Stable | `0.2.0` | `v0.2.0` | `0.2.0-1` | `0.2.0-1` |
 
-`pyproject.toml` is the source of release metadata. Keep `VERSION` and the runtime `__version__` synchronized; `tools/release_metadata.py` rejects disagreement. It also validates the tag and produces the native version mappings. Never move or reuse a released version/tag. Fixes receive a new version.
+Update `pyproject.toml`, `VERSION` and the runtime `__version__` together.
+`tools/release_metadata.py` checks that they agree and generates package versions.
+Give fixes a new version; published tags and assets stay unchanged.
 
-## Automated checks
+## Checks
 
-The **Checks** workflow runs for PRs and pushes to `main`. It checks Python compatibility, lint and version consistency, then builds the shared desktop app and both native packages. Production Python 3.13 tests run inside the package build; compatibility checks cover 3.11 and 3.14. Installed-package tests run in the pinned Ubuntu 26.04 and official CachyOS images.
+Pull requests require **Required checks**, resolved review conversations and a
+squash merge. Keep `main` protected against force pushes and deletion.
 
-Configure protection for `main` to require a PR, the **Required checks** status, resolved review conversations and linear history, and disallow force pushes/deletion. The sole maintainer may merge their own PR after reviewing the diff and green checks; request another reviewer when one is available. A green workflow is not a hardware approval.
+CI checks Python 3.11 and 3.14 compatibility and runs the production tests with
+Python 3.13 during packaging. It installs the native packages in Ubuntu 26.04 and
+CachyOS containers and checks dependencies, startup, firmware preparation and
+removal. [Testing](TESTING.md) covers the separate desktop and keyboard checks.
 
-PR workflows have read-only repository permissions and no release credentials. Release permissions exist only in the manually invoked release job. Action versions are pinned by commit, and base/test containers by digest. Updating these pins is a normal reviewed change. Do not run contributor code in a privileged `pull_request_target` workflow or on a personal hardware runner.
+PR workflows have read-only permissions; only the release job can publish assets.
+Action versions and container images are pinned. Review pin changes through a PR
+and keep contributor code off privileged workflows and hardware runners.
 
-## Prepare an alpha
+## Prepare and publish
 
-1. Open a PR with the version changes, implementation, validation evidence and `docs/releases/<tag>.md` notes. Complete the archive/provenance review and merge after **Required checks** passes.
-2. On `main`, run **Actions → Release candidate → Run workflow** and enter the exact tag, such as `v0.2.0-alpha.1`.
-3. The workflow validates the version, builds and tests packages, audits release contents, creates a draft with all assets, downloads them again and checks every filename and byte before publishing an alpha as a **prerelease**. It is not marked as the latest stable release.
-4. Download and test those exact assets with hardware. Retain captures/full journals privately; describe relevant outcomes in reviewed release notes or issues without firmware attachments.
+1. Open a PR with the changes, version update and `docs/releases/<tag>.md` notes.
+   Use full GitHub links in the notes so they also work on the release page.
+   Include test results and any remaining platform limitations. Merge after review
+   and **Required checks** passes.
+2. On `main`, run **Actions → Release candidate → Run workflow** with the exact
+   tag, for example `v0.2.0-alpha.3`.
+3. The workflow builds and tests the packages, checks their contents, uploads a
+   draft release and downloads the assets again to verify filenames and checksums.
+   Both alpha and stable releases stay drafts.
+4. Test those downloaded packages on the supported desktops and keyboard using
+   [TESTING.md](TESTING.md). Record the package checksums and results in the release
+   notes. Keep firmware files and full logs local.
+5. Review the notes and publish the existing draft. Keep alphas marked as
+   prereleases, with **latest stable** disabled. Publish the tested files without
+   rebuilding them.
 
-The repository's visibility is a separate maintainer decision. A release in a private repository remains accessible only to users with access. Do not change repository visibility as a side effect of packaging.
+Continue alpha releases until the supported-platform checks are complete.
+[Validation](VALIDATION.md) records CachyOS hardware results and the pending
+Ubuntu desktop/USB test.
 
-## Stable releases
+## Downloads and failed builds
 
-The same workflow prepares a **draft** for a stable version. It never automatically publishes stable releases. Test the actual draft assets on fresh supported desktops and real hardware, document installation/restoration results and remaining limitations, and then publish the existing draft assets. Do not rebuild them after the acceptance test.
+The main downloads are the `.deb` and `.pkg.tar.zst` packages. Also include the
+portable Linux archive, source archive, reference-client wheel, `SHA256SUMS`,
+artifact manifest and build metadata. `tools/audit_release.py` checks this asset
+list and rejects private files, full firmware images and unsafe archive paths.
 
-Until the native installer has physical installation/restoration evidence, distribute only clearly labelled experimental alpha builds. A successful simulation, packaged demo, exact firmware hash, or Apple notarization does not prove a physical update or recovery path.
+Debian uses `~` inside alpha package versions for upgrade ordering. Download
+filenames use `-` because GitHub normalizes tildes. Checksums use the downloadable
+filename.
 
-## Assets and failed runs
-
-Native `.deb` and `.pkg.tar.zst` packages are the primary downloads. Also retain the portable Linux archive, matching source archive, independent Python wheel, `SHA256SUMS`, artifact manifest, and build metadata. Only the explicit list in `tools/audit_release.py` is uploaded. Manufacturer images, patched complete images, `.local/`, keys, captures and research clones must never be included.
-
-Debian's internal alpha version uses `~` for correct upgrade ordering. The download
-filename uses `-` because GitHub normalizes tildes during upload. The checksum
-list uses the exact downloadable filename; never infer the internal version from
-the filename alone.
-
-CI artifacts expire quickly to limit storage; GitHub Release assets are the distribution copies. A failed run does not publish a successful alpha. If creation/upload fails after a draft exists, inspect the draft and hashes before resuming. The workflow refuses to overwrite an existing release. Do not delete or replace published assets to hide an error; issue a new version.
-
-No package installation or CI job flashes a keyboard. The end user must explicitly confirm the app's install action.
+CI artifacts are temporary; GitHub Release assets are the distribution copies.
+If a run stops after creating a draft, inspect its assets and checksums before
+continuing. The workflow refuses to overwrite an existing release. Fix errors in
+published packages with a new version.

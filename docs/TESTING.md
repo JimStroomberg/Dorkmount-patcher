@@ -1,90 +1,51 @@
-# First hardware trial
+# Testing a release
 
-The new native installer has offline coverage but **has not completed a physical
-update**. The DMR2 firmware is the exact previously tested extension. These are
-separate claims. Recovery from nonbooting firmware remains unproven.
+For everyday installation, restoration and failure handling, use
+[INSTALLING.md](INSTALLING.md) and [TROUBLESHOOTING.md](TROUBLESHOOTING.md).
+[VALIDATION.md](VALIDATION.md) records completed checks and their scope.
 
-## Prepare and install
+## Record the candidate
 
-1. Keep another way to control the computer available; the keyboard disconnects
-   during updates. Use stable power and a direct USB connection.
-2. Keep the Media Dock and Numpad attached. Close Dorkmount, IO Center, browser
-   keyboard-control tabs and background controllers. Automatic-start controllers
-   must stay stopped until verification finishes.
-3. Install the Ubuntu or CachyOS package using the [release instructions](releases/v0.2.0-alpha.2.md),
-   reconnect the keyboard and open **Dorkmount Patcher** from the application menu.
-   If access is denied, choose **Set up USB access**, approve the password prompt
-   and reconnect the keyboard. The portable bundle requires this access setup too.
-4. Choose **Check keyboard**, then **Prepare update**. Preparation downloads and
-   verifies fixed official files; it sends no update commands.
-5. Review the result, acknowledge the test-release risk and choose **Install
-   DirectDraw**. Firmware changes begin at this point.
+Record app version, exact package checksum/source commit, OS version, keyboard
+model/revision, manufacturer versions and DMR capability version. These identify
+different things: an app version or manufacturer reply alone does not attest to
+the installed extension. Keep complete firmware, journals and captures private;
+publish only the relevant acceptance summary.
 
-Keep power and cables connected throughout. The app requests a sleep inhibitor
-and prevents normal closing during work. Allow several minutes, including
-finishing and reconnection.
+## Install and restore
 
-## Acceptance
+- Install the native package as a normal desktop user. Verify dependencies,
+  menu launch, USB rule, official HTTPS download and permission/reconnect flow.
+- Close all competing controllers and prevent their automatic reconnect.
+- Follow Check → Prepare → Install. Verify all three controllers, Ready/Commit,
+  fresh normal-mode identity and the expected DMR3 capabilities.
+- Close the updater and check normal typing, existing settings, other keyboard
+  apps and display-key operation.
+- Restore stock through the native app; confirm the original Clock icon and all
+  built-in functions. Reinstall DMR3 and repeat the screen checks.
+- Verify app restart, keyboard reconnect and screen idle/wake. Record the precise
+  stage and outcome of any interruption experiment so its limits are clear.
 
-The app must verify all three parts, Ready/Commit completion, a fresh normal-mode
-identity read and the exact DMR2 capabilities. Progress alone is not success.
+## Dashboard and companion
 
-Close the updater, open a compatible application and select **Clock**. Confirm
-graphics, Left/Right switching, double-click Menu to leave, and redraw when
-returning to Clock. Check ordinary typing and the existing images/settings.
-The updater does not back up or read back all profiles, macros and settings.
+- Confirm the Dashboard icon, all selector highlights and unchanged other tiles.
+- Open Dashboard without a companion: only Waiting… should appear.
+- Send a complete first frame; no placeholder pixels should remain.
+- Check Left/Right, ignored single Menu click, and double-click Menu to leave.
+- On re-entry, confirm Waiting… and then a full companion redraw. Check accent
+  changes and idle/wake for unexpected Clock graphics.
+- Confirm manufacturer versions separately from `dmr_version=3` and features
+  `dock_directdraw`, `dock_navigation`, `dashboard_view`. Features remain present
+  outside Dashboard; only `selected` changes.
+- After stock restoration, reopen a fresh session and confirm that the companion
+  disables DirectDraw and offers the patcher. A transport failure must remain a
+  connection problem, not a claim that the extension is missing.
 
-Developers can use `examples/first_pixels.py` with the source package installed
-in a Python environment. The updater bundle itself needs no Python setup.
-Run only one controller or example at a time.
+## Release checks
 
-After those checks pass, close the companion app and reopen the updater. Choose
-**Restore original keyboard firmware**, repeat Check → Prepare → Restore → Verify,
-and physically confirm original Clock behavior. If desired, reinstall DirectDraw
-and repeat the checks. Restoration requires a responsive supported normal-mode
-keyboard; it is not emergency recovery for a nonbooting device.
-
-## Failure handling
-
-Before installation, Help & details explains missing access, unsupported firmware
-or a failed download. Correct that issue and check again.
-
-After installation starts, **keep the keyboard connected, preserve the session
-folder and stop**. The app disables retry: losing an acknowledgment does not prove
-whether the operation occurred. Do not switch images or MCU selections, use an
-unrelated flasher or repeatedly resend commands.
-
-The journal identifies the last stage and Commit evidence. Version 1.29.0 alone
-cannot establish success because DMR retains that version. Fresh capabilities
-and transfer evidence matter. The official updater may recognize an enumerated
-update-mode device, but that does not establish recovery from every failed state.
-
-## Local evidence and privacy
-
-Sessions normally live under `~/.local/state/dorkmount-patcher/`, respecting
-`XDG_STATE_HOME`. Each attempt retains stock/patched files, a manifest and
-`session.json`. The journal records local USB port and update events, not ordinary
-keystrokes or a serial-number query.
-
-Keep full firmware, captures and machine-specific notes private. Review diagnostic
-excerpts before sharing. Public issues should contain app version, distribution,
-stage, error text and whether normal USB returned. Never upload firmware or a
-complete session directory. Maintainer checklists/results belong in ignored
-`.local/` or the private lab.
-
-## Uninstall
-
-Uninstall with your package manager: `sudo apt remove dorkmount-patcher` on Ubuntu,
-or `sudo pacman -R dorkmount-patcher` on CachyOS. The launcher and packaged USB
-rule are removed. For the portable bundle, remove the extracted app folder.
-Local restoration files remain. Uninstalling does not restore keyboard firmware.
-
-If you used the app's **Set up USB access** fallback, that separate local rule
-remains after uninstalling. To remove it:
-
-```sh
-sudo rm /etc/udev/rules.d/70-dorkmount-patcher.rules
-sudo udevadm control --reload-rules
-```
-
-Reconnect afterward. Other rules may independently grant vendor access.
+Run the required host/build checks and inspect the exact release archives. Test
+native packages on every platform claimed as physically verified. CachyOS has
+maintainer-confirmed hardware results; Ubuntu 26.04 still needs its real-machine
+acceptance. A Linux container launch does not validate a desktop USB session.
+Retain precise limitations in the release notes. No automated test should flash
+physical hardware.

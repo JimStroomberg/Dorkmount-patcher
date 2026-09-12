@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0-only
-"""DMR1/DMR2 volatile pixel sender, extracted from the tested Dorkmount controller.
+"""DMR1/DMR2/DMR3 volatile pixel sender, with explicitly known capabilities.
 
 The exchange callable owns QLink session, sequence, CRC and device-status checks.
 This module also runs against original firmware instructions in the offline model.
@@ -13,8 +13,14 @@ from contextlib import contextmanager
 
 MAGIC = b"DMR\x01"
 NAV_MAGIC = b"DMR\x02"
+DASHBOARD_MAGIC = b"DMR\x03"
 COMMAND = (0x21, 0)
 WIDTH, HEIGHT = 320, 240
+_FEATURES = {
+    MAGIC: ("dock_directdraw",),
+    NAV_MAGIC: ("dock_directdraw", "dock_navigation"),
+    DASHBOARD_MAGIC: ("dock_directdraw", "dock_navigation", "dashboard_view"),
+}
 
 
 class Client:
@@ -34,18 +40,31 @@ class Client:
         return response
 
     def capabilities(self):
+        """Refresh the known DMR version and features, independently of selection.
+
+        DMR1/DMR2/DMR3 carry a version, not feature flags. Only explicitly supported
+        contracts are mapped here; a higher number never implies compatibility.
+        A failed refresh revokes cached drawing/navigation permission.
+        """
+        self.selected = self.navigation = False
+        self.dmr_version = None
+        self.features = ()
         response = self.request(MAGIC + b"\0")
         if not isinstance(response, bytes) or len(response) != 12:
-            raise IOError("Missing DMR1 capability response")
+            raise IOError("Missing or malformed DMR capability response")
         magic, width, height, pixels, selected, fill = struct.unpack("<4sHHBBH", response)
-        if magic not in (MAGIC, NAV_MAGIC) or (width, height, pixels, fill) != (320, 240, 21, 4096):
-            raise IOError("Unexpected DMR1 capabilities")
+        if magic not in _FEATURES or (width, height, pixels, fill) != (320, 240, 21, 4096):
+            raise IOError("Unsupported DMR capabilities")
         if selected not in (0, 1):
-            raise IOError("Invalid DMR1 view state")
+            raise IOError("Invalid DMR view state")
+        self.dmr_version = magic[3]
+        self.features = _FEATURES[magic]
         self.selected = bool(selected)
-        self.navigation = magic == NAV_MAGIC
+        self.navigation = "dock_navigation" in self.features
         self.max_pixels, self.max_fill = pixels, fill
         return dict(
+            dmr_version=self.dmr_version,
+            features=self.features,
             width=width,
             height=height,
             max_pixels=pixels,
@@ -67,7 +86,7 @@ class Client:
     def draw(self, operation, x, y, width, height, data):
         self.bounds(x, y, width, height)
         if not self.selected:
-            raise IOError("Open Clock on the Dock before drawing")
+            raise IOError("Verify DirectDraw support and select Dashboard (Clock on older patches)")
         payload = MAGIC + bytes((operation,)) + struct.pack("<4H", x, y, width, height) + data
         if self.request(payload) != b"":
             raise IOError("Unexpected DMR1 drawing acknowledgment")

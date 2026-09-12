@@ -21,7 +21,7 @@ Use a normal graphical desktop with a working GPU/driver stack, active local ses
 Fontconfig also comes from the distribution so its library matches the system's
 font configuration format. The GUI uses the packaged DejaVu Sans font on Linux.
 
-The initial release targets Ubuntu 26.04 and current stable CachyOS on x86-64. New Ubuntu releases need validation. macOS Apple Silicon and Bazzite are Coming soon; Windows is later. The generic Linux archive retains the same system requirements but does not install dependencies or rules automatically.
+CachyOS x86-64 has maintainer-confirmed hardware results. Ubuntu 26.04 x86-64 has package/container coverage; real-machine verification remains pending. New Ubuntu releases need validation. macOS Apple Silicon and Bazzite are Coming soon; Windows is later. The generic Linux archive retains the same system requirements but does not install dependencies or rules automatically.
 
 ## Running from source on other distributions
 
@@ -37,5 +37,6 @@ Keep Linux `udevadm`, `pkexec` and `systemd-inhibit` available for the current h
 - Native packaging: PyInstaller, binutils, dpkg-deb, desktop-file-utils, and CachyOS makepkg. The container build supplies these.
 - Installed-package checks: Xvfb, xauth, headless Weston and desktop-file-utils. These are test tools, not end-user requirements.
 - Full firmware reproduction only: Clang, LLD and llvm-objcopy 22.1.8. Normal app builds and installations do not need these.
+- Optional DMR3 instruction validation: Unicorn 2.1.4 and Capstone 5.0.9, pinned in the `firmware-check` extra. These are contributor tools; they are not required by or bundled into the desktop app.
 
 Dependencies and original license notices are retained in the desktop bundle. See [THIRD_PARTY.md](../THIRD_PARTY.md).

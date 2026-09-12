@@ -59,9 +59,10 @@ def test_stock_restore_exact_and_output_directory_not_overwritten(synthetic, tmp
         firmware.export(package, out)
 
 
-def test_payload_metadata_matches_original_target_and_source():
-    spec = firmware.target()
-    original = json.loads((ROOT / "firmware/targets/1.29.0-dmr2.json").read_text())
+@pytest.mark.parametrize("extension", ["dmr2", "dmr3"])
+def test_payload_metadata_matches_original_target_and_source(extension):
+    spec = firmware.target(extension)
+    original = json.loads((ROOT / f"firmware/targets/1.29.0-{extension}.json").read_text())
     assert spec["components"] == original["components"]
     for region, source in zip(spec["patches"], original["patches"], strict=True):
         assert {key: region[key] for key in source} == source

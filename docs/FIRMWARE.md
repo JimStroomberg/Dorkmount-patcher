@@ -1,13 +1,48 @@
 # Firmware compatibility and release boundary
 
-**Custom graphics require an installed DMR extension.** Version 0.2.0a1 adds
-a Linux desktop installer and compiler-free DMR2 patching alongside the original
-offline builders. Extension bytes are unchanged; the new native installer has
-not yet been tested on hardware. Follow [TESTING.md](TESTING.md) for the trial.
+**Custom graphics require an installed DMR extension.** Version 0.2.0a3 prepares
+DMR3 by default. Native installation, stock restoration, reinstallation and the
+Dashboard workflow are maintainer-confirmed on CachyOS. Ubuntu 26.04 real-machine
+verification is pending. See [validation](VALIDATION.md) for the exact scope and
+[installation](INSTALLING.md) for the user procedure. Alpha.1/alpha.2 use DMR2.
 
 The extension changes one routing byte in Main and reuses the existing Clock renderer space on the Media Dock. The Numpad firmware stays stock. Clock becomes the host dashboard view. Widget changes happen on Linux. The manufacturer version replies remain 1.29.0, so a version string alone cannot establish compatibility. The app checks exact DMR capabilities before drawing; this is a protocol check, not a firmware attestation.
 
-## DMR2: physical view navigation
+## Current extension: DMR3 Dashboard
+
+DMR3 replaces the first selector tile with original monitor/bar-chart artwork.
+Opening it selects the custom view directly and draws `Waiting...` using the
+existing font. The Clock submenu, clock, stopwatch and timer controls are bypassed.
+The companion must send a complete first frame and repaint after re-entry.
+Left/Right and double-click Menu retain DMR2 behaviour. There is no heartbeat:
+after a companion stops, its last pixels remain until another display event.
+
+Requests still use `DMR\x01`; capabilities reply with `DMR\x03` and the same
+12-byte layout. The host maps this to `dock_directdraw`, `dock_navigation` and
+`dashboard_view`. Older strict clients need an update. No display-key drawing is
+added, and no new global RAM or persistent graphics-store writes are introduced.
+
+The new builder and target are `firmware/dmr3/` and
+`firmware/targets/1.29.0-dmr3.json`. DMR3 replaces 616 bytes across Main and Dock;
+the manifest pins every range, original hash and final image hash. Main remains
+`23fa16e4e5bc0fbc520bdfadc35e3d3d2e2cbbdd45ee34651336ce647a421c02`.
+Dock is `8aadce6d0e2f89cbd9d9db08c26dac4d16a4ad55f1a0c1e18f589ee228ad2c1d`.
+Numpad remains stock.
+
+The selector's original artwork is in external image storage. DMR3 draws its
+icon over the Clock tile and intercepts that tile's highlight redraws. Other
+tiles continue through the original renderer. Old Clock-sheet renders are
+suppressed, including the accent-colour callback, to protect companion pixels.
+It does not erase all Clock-related bytes or alter stored assets.
+
+Code occupies bounded parts of the old Clock entry, stopwatch renderer, Clock
+renderer and timer editor. Full-image/crop entry hooks replay their original
+four-byte prologues before unrelated calls continue. All reused entry points,
+section bounds and exact preimages are checked. [Validation](VALIDATION.md)
+records original-instruction checks and the reported CachyOS hardware results.
+Neither establishes behaviour on every hardware revision or recovery from every failure.
+
+## DMR2: physical view navigation (preserved)
 
 DMR2 retains the DMR1 drawing request format and Main image, advertises capability magic `DMR\x02`, and routes Clock Left / Right through the existing Profiles notification path. Clock's internal stopwatch/timer navigation is replaced by host view switching. Single Menu / Select inside Clock does nothing; double-click retains the original return to the app selector. Selecting Clock always permits host drawing, regardless of the former Clock subview flag.
 
@@ -27,7 +62,7 @@ Official release source: [Dark Mount firmware manifest](https://dfu-release.bequ
 | Dock | `MCU1_MMD_1.29.0.0.bin` / 81,000 | `d2cbc938269e9c2272c3667320c625cdd418f0dda7e079050c45dbc1f6ebb0df` |
 | Numpad | `MCU2_NPD_1.29.0.0.bin` / 325,200 | `12a57913e1a3bf4ecddd95a4877d93fbd5fa9b8c9ece988f535f5e81500baf1d` |
 
-Device information must report model **1**, hardware revision **1**, and Main/Dock **1.29.0** before the application tries DMR1. The read-only `03/01` identity query precedes graphics allowlisting; other revisions stop with an explanation. No serial-number query is made.
+Device information must report model **1**, hardware revision **1**, and Main/Dock **1.29.0** before the application tries DMR. The read-only `03/01` identity query precedes graphics allowlisting; other revisions stop with an explanation. No serial-number query is made.
 
 The only hardware-tested DMR1 outputs are:
 
@@ -37,14 +72,14 @@ The only hardware-tested DMR1 outputs are:
 
 ## Reproduce offline
 
-Source is in `firmware/dmr1/`. The reproduced build used Clang/LLD/llvm-objcopy **22.1.8**, targeting Cortex-M4 Thumb with `-Oz`. Other toolchains are accepted only if they emit the exact same tested output hashes.
+The current candidate source is in `firmware/dmr3/`. The reproduced build used Clang/LLD/llvm-objcopy **22.1.8**, targeting Cortex-M4 Thumb with `-Oz`. Other toolchains are accepted only if they emit the exact same pinned output hashes.
 
 ```sh
-python3 firmware/dmr1/build.py \
+python3 firmware/dmr3/build.py \
   --main /path/to/MCU0_1.29.0.0.bin \
   --dock /path/to/MCU1_MMD_1.29.0.0.bin \
   --numpad /path/to/MCU2_NPD_1.29.0.0.bin \
-  --output ./private-dmr1-build
+  --output ./.local/dmr3-build
 ```
 
 The output must be new. All source hashes, output hashes, sizes and patch extents must match before any candidate is exported. The builder performs no network or USB access and does not flash anything. It does not accept arbitrary firmware revisions or modify MCU addresses supplied by a caller. Binary inputs/outputs are Git-ignored and must not be added to a public release.
@@ -55,16 +90,17 @@ The research keyboard was updated using the official Web updater with an instrum
 
 The native flow is specified in [UPDATER-PROTOCOL.md](UPDATER-PROTOCOL.md): fixed
 inputs, exact hashes/ranges, restoration copies, device-requested transfers and
-fresh normal-mode verification. Physical installation, restoration and
-interruption behavior still need validation. Recovery from nonbooting code
-remains unproven. The earlier data-only Clock marker was restored to stock;
-restoration from executable graphics code remains untested. Firmware updates
-can brick hardware; host backups do not restore keyboard firmware.
+fresh normal-mode verification. The maintainer confirmed installation, stock
+restoration and reinstallation on CachyOS, including disconnect/restart testing.
+The report does not establish every possible interruption stage or nonbooting
+recovery. Ubuntu verification is pending. Firmware updates can leave hardware
+unusable; host backups alone do not restore keyboard firmware.
 
 For an already compatible Dock, the application uses session management, the read-only `03/01` identity query and the bounded volatile `21/00` drawing command. Unsupported capability replies stop physical output. The controller graphics path does not invoke firmware updates. Its separate display-key image feature does use persistent storage and is unrelated to DMR drawing.
 
 ## Protocol and limitations
 
-[PROTOCOL.md](PROTOCOL.md) documents DMR1. Current limitations are one keyboard, the Clock slot, serialized small reports, no atomic frame swap, no view-generation counter; DMR1 lacks physical button forwarding. DMR2 enables Clock Left / Right. A full repaint every five seconds repairs a very fast leave/re-enter between capability probes. The source uses no new global RAM, heap or framebuffer; it calls existing LCD routines and checks the active Clock view before drawing.
+[DEVELOPERS.md](DEVELOPERS.md) is the canonical contract for all three versions;
+[PROTOCOL.md](PROTOCOL.md) retains firmware implementation notes. Current limitations are one supported keyboard revision, the former Clock slot, serialized small reports, no atomic frame swap and no view-generation counter. DMR2/DMR3 enable Left / Right. Clients should periodically repaint the full screen to repair a very fast leave/re-enter between capability probes. The source uses no new global RAM, heap or framebuffer; it calls existing LCD routines and checks the active custom view before drawing.
 
 The preceding lab validation executed 4,230 transactions through original Dock instructions, checked 104-byte maximum stack use and reconstructed full frames. Real captures and photographs confirmed host pixels and automatic menu return. These findings apply to the tested hardware/images, not all Dark Mount revisions or future official firmware releases.

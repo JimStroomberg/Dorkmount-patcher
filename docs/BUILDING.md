@@ -1,6 +1,9 @@
 # Build and develop
 
-End users should download a native package from [Releases](https://github.com/JimStroomberg/Dorkmount-patcher/releases). These instructions are for contributors and other Linux distributions. Source availability does not establish hardware or distribution support.
+For native packages, follow [installation and restoration](INSTALLING.md). These
+instructions are for contributors and other Linux distributions. Dorkmount
+Patcher prepares the keyboard; Dorkmount, the separate widget app, is coming soon.
+Source availability does not establish hardware or distribution support.
 
 ## Run from source
 
@@ -15,7 +18,7 @@ make demo
 make check
 ```
 
-`make setup` installs the pinned development tools into `.venv`. It does not modify system Python. `make doctor` is read-only and reports missing tools; it is not proof that USB or every Qt plugin works. `make demo` never accesses hardware, downloads firmware or changes permissions. To run the real Linux workflow, use `.venv/bin/dorkmount-patcher`.
+`make setup` installs the pinned development tools into `.venv`. It does not modify system Python. `make doctor` is read-only and reports missing tools; it is not proof that USB or every Qt plugin works. `make check` also uses the OpenSSL 3 command-line tool to generate temporary certificates for local HTTPS tests. `make demo` never accesses hardware, downloads firmware or changes permissions. To run the real Linux workflow, use `.venv/bin/dorkmount-patcher`.
 
 From a source archive, the equivalent Python commands also work:
 
@@ -46,7 +49,15 @@ make package-test OUT=dist/next-candidate
 
 The shared PyInstaller application is built using `packaging/Dockerfile`; `tools/package_linux.py` prepares Debian metadata and a `PKGBUILD` around the same files. The official CachyOS container runs `makepkg`. `packaging/platforms.json` pins the test images and declares the remaining system dependencies. No keyboard device is exposed to any container.
 
-Package tests install through APT/pacman, allowing those tools to resolve dependencies. They check the installed desktop entry, USB rule, bundled developer guide, version, offscreen/X11/headless-Wayland demo launch, and uninstall. They do not run a complete user desktop, logind session or physical keyboard update.
+Package tests install through APT/pacman, allowing those tools to resolve dependencies. They check the installed desktop entry, USB rule, bundled developer guide, version, offscreen/X11/headless-Wayland demo launch, verified HTTPS preparation and uninstall. Preparation downloads the exact supported official files, verifies all hashes and constructs the existing patch entirely inside the disposable container. Manufacturer bytes are not included in test artifacts. These checks require the official download server to be reachable; they do not run a complete user desktop, logind session or physical keyboard update.
+
+To exercise the same download/preparation path without opening a keyboard:
+
+```sh
+dorkmount-patcher prepare --download --output ./.local/prepared
+```
+
+The output directory must be new and its firmware files must stay private. For offline preparation, use `--stock-dir ./originals` instead of `--download`. HTTPS uses the operating system's trust store, including an explicit `SSL_CERT_FILE` or `SSL_CERT_DIR` override. On Linux, if the bundled OpenSSL's default certificate file is absent and neither override is set, the app loads the system CA bundle at `/etc/ssl/certs/ca-certificates.crt`. Certificate and hostname verification stay enabled.
 
 Before adding display-test tools, the tests check the app's library dependencies
 and launch its offscreen demo. The disposable CachyOS test container receives
@@ -61,6 +72,32 @@ personal directories are mounted.
 This is a separate task. The desktop build includes the reviewed compiler-free patch data and does not need manufacturer images or an ARM toolchain.
 
 Follow [FIRMWARE.md](FIRMWARE.md) to reproduce firmware using Clang, LLD and llvm-objcopy 22.1.8 and locally supplied, verified originals. Keep complete input/output images private. Other compiler versions are acceptable only when every resulting image matches the exact reviewed hashes.
+
+After reproducing DMR3, install the optional instruction-checker dependencies and
+run it against the original and candidate Dock images:
+
+```sh
+.venv/bin/python -m pip install '.[firmware-check]'
+.venv/bin/python tools/check_dashboard.py \
+  --original /path/to/MCU1_MMD_1.29.0.0.bin \
+  --candidate .local/dmr3-build/dock-dmr3.bin \
+  --output .local/dashboard-check
+```
+
+The output directory must be new. It contains JSON evidence and modeled PNG
+previews; no keyboard is opened. The checker runs original instructions with
+synthetic external-image fixtures and a modeled LCD/GPIO path. It is not a
+whole-device emulator or a substitute for physical flashing/restoration, USB,
+interrupt timing, idle/wake and real selector-artwork checks.
+
+To regenerate the compiler-free data after a verified DMR3 build:
+
+```sh
+.venv/bin/python tools/generate_payload.py .local/dmr3-build --extension dmr3
+```
+
+Review the source hashes, exact candidate hash and bounded replacements together.
+Never relax a hash check to accept an unexplained compiler or firmware change.
 
 ## Before contributing
 

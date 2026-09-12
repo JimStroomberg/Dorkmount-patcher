@@ -75,7 +75,7 @@ class DemoWorkflow:
         return "demo", {"directdraw": None}
 
     def prepare(self, restore, progress):
-        for message in ("Getting the official firmware…", "Adding DirectDraw…", "Checking the update…"):
+        for message in ("Getting the official firmware…", "Adding Dashboard…", "Checking the update…"):
             progress(0, message)
             time.sleep(0.15)
         return "demo package"
@@ -129,10 +129,10 @@ class Window(QMainWindow):
         layout.setContentsMargins(34, 28, 34, 24)
         layout.setSpacing(16)
         layout.addWidget(self.label("DORKMOUNT  /  SCREEN UPDATER" + ("  /  DEMO" if demo else ""), "brand"))
-        layout.addWidget(self.label("Make your screen your own.", "title"))
+        layout.addWidget(self.label("Prepare your screen for widgets.", "title"))
         layout.addWidget(self.label(
-            "Add custom dashboards and widgets to your Dark Mount screen.\n"
-            "After setup, your favourite compatible app supplies what you see.", "muted"))
+            "This app only updates your keyboard. It does not include widgets.\n"
+            "Dorkmount, the separate widget app, is coming soon.", "muted"))
         self.steps = self.label("1  Check keyboard     →     2  Prepare     →     3  Install     →     4  Verify", "muted")
         layout.addWidget(self.steps)
         card = QFrame()
@@ -147,7 +147,7 @@ class Window(QMainWindow):
             "Close Dorkmount, IO Center and other keyboard-control apps first.", "muted")
         content.addWidget(self.description)
         self.mode = QComboBox()
-        self.mode.addItems(["Add DirectDraw to my screen", "Restore original keyboard firmware"])
+        self.mode.addItems(["Add Dashboard to my screen", "Restore original keyboard firmware"])
         self.mode.currentIndexChanged.connect(self.reset)
         content.addWidget(self.mode)
         self.progress = QProgressBar()
@@ -167,8 +167,8 @@ class Window(QMainWindow):
         layout.addWidget(card)
         self.notice = self.label(
             "Demo mode · No keyboard access, downloads or system changes." if demo else
-            "Test release · Supports the tested Dark Mount revision with firmware 1.29.0. "
-            "Installation and restoration in this new app still need a real-keyboard test.", "muted")
+            "Test release · For the supported Dark Mount revision with firmware 1.29.0. "
+            "Installation and restoration tested on CachyOS; Ubuntu desktop testing pending.", "muted")
         layout.addWidget(self.notice)
         row = QHBoxLayout()
         self.access_button = QPushButton("Set up USB access")
@@ -185,13 +185,16 @@ class Window(QMainWindow):
         self.details = QTextEdit()
         self.details.setReadOnly(True)
         self.details.setPlainText(
-            "DirectDraw uses the Clock view. Its normal clock/timer rendering is replaced. "
+            "Dashboard replaces the Clock icon and its clock/timer submenu. "
+            "It shows Waiting… until a compatible app starts drawing. "
+            "Dorkmount, the separate widget app, is coming soon. This updater does not include widgets. "
             "Left/Right switches views in a compatible host app. Double-click Menu to leave.\n\n"
             "The updater downloads only the exact supported official files from be quiet!, "
-            "checks them, and adds the existing DMR2 extension locally. No firmware compiler is needed.\n\n"
+            "checks them, and adds Dashboard locally. Installation and restoration have been "
+            "tested on a CachyOS keyboard setup. Ubuntu desktop testing is pending.\n\n"
             "USB setup adds a narrow active-desktop permission rule and asks for your administrator password. "
             "Reconnect the keyboard afterward. The updater itself runs without administrator privileges.\n\n"
-            "If an update stops: keep the keyboard connected, save the details and consult docs/TESTING.md. "
+            "If an update stops: keep the keyboard connected, save the details and consult docs/TROUBLESHOOTING.md. "
             "Do not repeat installation blindly. Recovery from nonbooting firmware is unproven.\n\n"
             f"Version {__version__}. Local files: {updater.state_directory()}"
         )
@@ -316,7 +319,7 @@ class Window(QMainWindow):
         self.phase = "checked"
         self.status.setText("Your keyboard is supported.")
         self.description.setText(
-            "DirectDraw is already present. You can reinstall the verified extension or choose original firmware above."
+            "Custom screen support is present. You can install the Dashboard update or choose original firmware above."
             if info["directdraw"] else
             "We’ll get the official firmware, prepare your update and verify every file. Your keyboard stays unchanged during preparation."
         )
@@ -325,16 +328,16 @@ class Window(QMainWindow):
     def prepared(self, package):
         self.package, self.phase = package, "ready"
         restore = self.mode.currentIndex() == 1
-        self.status.setText("Ready to restore original firmware." if restore else "Ready to add DirectDraw.")
+        self.status.setText("Ready to restore original firmware." if restore else "Ready to add Dashboard.")
         self.description.setText(
             "This returns the screen to its original built-in functions."
-            if restore else "The Clock view will become your custom-app screen. Left/Right will switch app views; double-click Menu to leave."
+            if restore else "Dashboard replaces Clock. It shows Waiting… until a compatible app provides widgets. Dorkmount, the separate widget app, is coming soon."
         )
         self.description.setText(self.description.text() +
             " Allow several minutes. Keep the screen and number pad attached and all keyboard apps closed.")
         self.accept.setVisible(True)
         self.accept.setChecked(False)
-        self.primary.setText("Restore original firmware" if restore else "Install DirectDraw")
+        self.primary.setText("Restore original firmware" if restore else "Install Dashboard")
 
     def installed(self, directory):
         self.phase = "done"
@@ -346,7 +349,7 @@ class Window(QMainWindow):
         self.description.setText(
             "This was a simulation. No keyboard was accessed." if self.demo else
             "You can now close the updater." if restore else
-            "Close this updater, open Dorkmount or another compatible app, then select Clock on the keyboard screen."
+            "Close this updater and select the dashboard icon on your keyboard. Waiting… means it is ready for a compatible widget app. Dorkmount is coming soon; this updater does not provide widgets."
         )
         self.primary.setText("Finished")
         if directory:
