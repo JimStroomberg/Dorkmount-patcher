@@ -138,3 +138,16 @@ def test_cli_download_prepares_and_removes_temporary_cache(
     assert all((out / f"{name}-dmr2.bin").read_bytes() == raw
                for name, raw in synthetic[1].items())
     assert caches and all(not path.exists() for path in caches)
+
+
+@pytest.mark.parametrize("flags", [["--demo"], ["--screenshot", "demo.png"]])
+def test_demo_options_cannot_start_downloads(tmp_path, monkeypatch, flags):
+    def fail(*args):
+        raise AssertionError("Demo options must not cause a firmware download")
+
+    monkeypatch.setattr(firmware, "obtain_originals", fail)
+    out = tmp_path / "prepared"
+    with pytest.raises(SystemExit) as error:
+        cli.main([*flags, "prepare", "--download", "--output", str(out)])
+    assert error.value.code == 2
+    assert not out.exists()

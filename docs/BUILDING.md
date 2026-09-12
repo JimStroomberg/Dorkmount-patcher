@@ -15,7 +15,7 @@ make demo
 make check
 ```
 
-`make setup` installs the pinned development tools into `.venv`. It does not modify system Python. `make doctor` is read-only and reports missing tools; it is not proof that USB or every Qt plugin works. `make demo` never accesses hardware, downloads firmware or changes permissions. To run the real Linux workflow, use `.venv/bin/dorkmount-patcher`.
+`make setup` installs the pinned development tools into `.venv`. It does not modify system Python. `make doctor` is read-only and reports missing tools; it is not proof that USB or every Qt plugin works. `make check` also uses the OpenSSL 3 command-line tool to generate temporary certificates for local HTTPS tests. `make demo` never accesses hardware, downloads firmware or changes permissions. To run the real Linux workflow, use `.venv/bin/dorkmount-patcher`.
 
 From a source archive, the equivalent Python commands also work:
 
@@ -51,7 +51,7 @@ Package tests install through APT/pacman, allowing those tools to resolve depend
 To exercise the same download/preparation path without opening a keyboard:
 
 ```sh
-dorkmount-patcher prepare --download --output ./prepared-local
+dorkmount-patcher prepare --download --output ./.local/prepared
 ```
 
 The output directory must be new and its firmware files must stay private. For offline preparation, use `--stock-dir ./originals` instead of `--download`. HTTPS uses the operating system's trust store, including an explicit `SSL_CERT_FILE` or `SSL_CERT_DIR` override. On Linux, if the bundled OpenSSL's default certificate file is absent and neither override is set, the app loads the system CA bundle at `/etc/ssl/certs/ca-certificates.crt`. Certificate and hostname verification stay enabled.

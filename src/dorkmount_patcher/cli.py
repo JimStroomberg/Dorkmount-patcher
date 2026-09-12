@@ -23,6 +23,8 @@ def main(argv=None):
     offline.add_argument("--output", type=Path, required=True)
     offline.add_argument("--restore", action="store_true")
     args = parser.parse_args(argv)
+    if args.command and (args.demo or args.screenshot):
+        parser.error("Demo and screenshots cannot be combined with firmware preparation")
     if args.command == "prepare":
         from .firmware import export, obtain_originals, prepare, target
         if args.download:
