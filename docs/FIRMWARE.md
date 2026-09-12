@@ -1,6 +1,6 @@
 # Firmware compatibility and release boundary
 
-**Custom graphics require an installed DMR extension.** Version 0.2.0a3 prepares
+**Custom graphics require an installed DMR extension.** Version 0.2.0b1 prepares
 DMR3 by default. Native installation, stock restoration, reinstallation and the
 Dashboard workflow are maintainer-confirmed on CachyOS. Ubuntu 26.04 real-machine
 verification is pending. See [validation](VALIDATION.md) for the exact scope and

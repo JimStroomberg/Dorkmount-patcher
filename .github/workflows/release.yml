@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: 'Version tag matching this checkout, e.g. v0.2.0-alpha.3'
+        description: 'Version tag matching this checkout, e.g. v0.2.0-beta.1'
         required: true
         type: string
 permissions:
@@ -82,5 +82,5 @@ jobs:
           gh release download "$RELEASE_TAG" --dir downloaded-assets
           (cd downloaded-assets && sha256sum --check SHA256SUMS)
           diff -qr release-assets downloaded-assets
-          # Keep both alpha and stable releases in draft for maintainer review.
+          # Keep prereleases and stable releases in draft for maintainer review.
           # Publish these exact assets only after the acceptance checks.

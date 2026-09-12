@@ -10,7 +10,7 @@ body:
     id: version
     attributes:
       label: App version, package/build and operating system
-      placeholder: 'Example: 0.2.0a3, CachyOS, Wayland'
+      placeholder: 'Example: 0.2.0b1, CachyOS, Wayland'
     validations:
       required: true
   - type: textarea

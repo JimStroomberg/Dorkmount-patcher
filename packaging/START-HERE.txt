@@ -1,4 +1,4 @@
-Dorkmount Patcher — Linux alpha
+Dorkmount Patcher — Linux beta
 
 This app only patches your keyboard. It does not include widgets.
 Dorkmount, the separate widget app, is coming soon.

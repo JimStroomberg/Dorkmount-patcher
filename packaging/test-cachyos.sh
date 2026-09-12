@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 unshare --net true
+# Users must be able to upgrade alpha -> beta -> stable without a downgrade.
+test "$(vercmp 0.2.0alpha2-1 0.2.0beta1-1)" = -1
+test "$(vercmp 0.2.0beta1-1 0.2.0-1)" = -1
 pacman -Syu --noconfirm 2>&1 | tee /results/pacman-update.log
-# Local alpha package follows the distribution's existing local-signature policy.
+# Local package follows the distribution's existing local-signature policy.
 pacman -U --noconfirm /packages/*.pkg.tar.zst 2>&1 | tee /results/pacman-install.log
 sh /scripts/test-runtime.sh
 pacman -S --needed --noconfirm desktop-file-utils xorg-server-xvfb xorg-xauth weston 2>&1 | tee /results/pacman-harness.log

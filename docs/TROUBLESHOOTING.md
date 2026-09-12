@@ -15,7 +15,7 @@ The app's **Help & details** shows error messages and where it saves local files
 ## Download or preparation failed
 
 Your keyboard has not been updated at this stage. Check your internet connection
-and system date, then try preparing again. Version 0.2.0-alpha.3 fixes certificate
+and system date, then try preparing again. Version 0.2.0-beta.1 fixes certificate
 lookup in the packaged Linux app. If certificate errors persist, check that your
 system's CA certificates are installed and up to date.
 

@@ -13,19 +13,19 @@ is still pending. See [compatibility](../README.md#compatibility) and
 
 Download the package for your system from
 [Releases](https://github.com/JimStroomberg/Dorkmount-patcher/releases).
-Use **0.2.0-alpha.3 or newer** for Dashboard. Verify the download against the
+Use **0.2.0-beta.1 or newer** for Dashboard. Verify the download against the
 release's `SHA256SUMS` if transferring it between computers.
 
 On CachyOS, open a terminal in the download folder:
 
 ```sh
-sudo pacman -U ./dorkmount-patcher-0.2.0alpha3-1-x86_64.pkg.tar.zst
+sudo pacman -U ./dorkmount-patcher-0.2.0beta1-1-x86_64.pkg.tar.zst
 ```
 
 On Ubuntu 26.04, open the `.deb` with the system package installer, or use:
 
 ```sh
-sudo apt install ./dorkmount-patcher_0.2.0-alpha3-1_amd64.deb
+sudo apt install ./dorkmount-patcher_0.2.0-beta1-1_amd64.deb
 ```
 
 For later releases, use their exact filenames. The package manager installs the
@@ -46,7 +46,7 @@ libraries or device rules. Prefer the native package on CachyOS or Ubuntu.
 3. Leave **Add Dashboard to my screen** selected and choose **Check keyboard**.
 4. Choose **Prepare update**. The app downloads and verifies the supported
    official files and prepares stock restoration copies. This does not flash the keyboard.
-5. Read the result, acknowledge the alpha-release risk and choose **Install Dashboard**.
+5. Read the result, acknowledge the update risk and choose **Install Dashboard**.
    Keep power and cables connected while the app installs and verifies the update.
 6. After success, close the updater. Select the dashboard icon on the keyboard
    and start a compatible widget app. **Waiting…** stays on screen until the app draws.
