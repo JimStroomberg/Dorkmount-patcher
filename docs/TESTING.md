@@ -1,8 +1,8 @@
 # First hardware trial
 
-The new native installer has offline coverage but **has not completed a physical
-update**. The DMR2 firmware is the exact previously tested extension. These are
-separate claims. Recovery from nonbooting firmware remains unproven.
+Both the new DMR3 Dashboard firmware and native installer have offline coverage
+but **have not been tested on a real keyboard**. The earlier DMR2 hardware results
+do not validate this candidate. Recovery from nonbooting firmware remains unproven.
 
 ## Prepare and install
 
@@ -11,14 +11,16 @@ separate claims. Recovery from nonbooting firmware remains unproven.
 2. Keep the Media Dock and Numpad attached. Close Dorkmount, IO Center, browser
    keyboard-control tabs and background controllers. Automatic-start controllers
    must stay stopped until verification finishes.
-3. Install the Ubuntu or CachyOS package using the [release instructions](releases/v0.2.0-alpha.2.md),
-   reconnect the keyboard and open **Dorkmount Patcher** from the application menu.
+3. Use the 0.2.0a3 candidate from this checkout: [run from source or build a local
+   package](BUILDING.md). Published alpha.2 packages contain the older Clock-based
+   patch. For a local native package, reconnect the keyboard after installation
+   and open **Dorkmount Patcher** from the application menu.
    If access is denied, choose **Set up USB access**, approve the password prompt
    and reconnect the keyboard. The portable bundle requires this access setup too.
 4. Choose **Check keyboard**, then **Prepare update**. Preparation downloads and
    verifies fixed official files; it sends no update commands.
 5. Review the result, acknowledge the test-release risk and choose **Install
-   DirectDraw**. Firmware changes begin at this point.
+   Dashboard**. Firmware changes begin at this point.
 
 Keep power and cables connected throughout. The app requests a sleep inhibitor
 and prevents normal closing during work. Allow several minutes, including
@@ -27,11 +29,20 @@ finishing and reconnection.
 ## Acceptance
 
 The app must verify all three parts, Ready/Commit completion, a fresh normal-mode
-identity read and the exact DMR2 capabilities. Progress alone is not success.
+identity read and the exact DMR3 capabilities. Progress alone is not success.
 
-Close the updater, open a compatible application and select **Clock**. Confirm
-graphics, Left/Right switching, double-click Menu to leave, and redraw when
-returning to Clock. Check ordinary typing and the existing images/settings.
+Close the updater. Before starting a companion, check that the Clock tile is a
+dashboard icon and that opening it shows only **Waiting…**. Confirm the icon
+survives selection/highlight changes and the other selector tiles remain intact.
+The clock/timer/stopwatch submenu should never appear.
+
+Start an updated DMR3-compatible application and confirm that its complete first
+frame replaces all waiting text. Check Left/Right switching, double-click Menu to
+leave, and Waiting… followed by a full redraw when returning. A single Menu click
+must not open Clock controls. Check accent-colour changes, screen idle/wake,
+reconnect, ordinary typing, other keyboard apps and the existing images/settings.
+No Clock graphics should reappear over companion pixels. Stopping the companion
+does not restore Waiting… automatically; DMR3 has no heartbeat.
 The updater does not back up or read back all profiles, macros and settings.
 
 Developers can use `examples/first_pixels.py` with the source package installed
@@ -40,9 +51,18 @@ Run only one controller or example at a time.
 
 After those checks pass, close the companion app and reopen the updater. Choose
 **Restore original keyboard firmware**, repeat Check → Prepare → Restore → Verify,
-and physically confirm original Clock behavior. If desired, reinstall DirectDraw
+and physically confirm the original Clock icon and all three built-in functions.
+If desired, reinstall Dashboard
 and repeat the checks. Restoration requires a responsive supported normal-mode
 keyboard; it is not emergency recovery for a nonbooting device.
+
+For companion integration, record manufacturer versions separately from
+`dmr_version` and `features`. The reference client should report `dock_directdraw`
+and `dock_navigation` plus `dashboard_view` for DMR3 both inside and outside
+Dashboard; only `selected` changes. After restoration, reconnect with a fresh session and confirm custom
+functions are disabled and the companion offers setup through the patcher. A
+dropped capability reply with failed ordinary identity traffic must appear as a
+connection problem. These integration checks remain unverified on real hardware.
 
 ## Failure handling
 

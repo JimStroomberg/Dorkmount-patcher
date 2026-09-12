@@ -70,6 +70,32 @@ This is a separate task. The desktop build includes the reviewed compiler-free p
 
 Follow [FIRMWARE.md](FIRMWARE.md) to reproduce firmware using Clang, LLD and llvm-objcopy 22.1.8 and locally supplied, verified originals. Keep complete input/output images private. Other compiler versions are acceptable only when every resulting image matches the exact reviewed hashes.
 
+After reproducing DMR3, install the optional instruction-checker dependencies and
+run it against the original and candidate Dock images:
+
+```sh
+.venv/bin/python -m pip install '.[firmware-check]'
+.venv/bin/python tools/check_dashboard.py \
+  --original /path/to/MCU1_MMD_1.29.0.0.bin \
+  --candidate .local/dmr3-build/dock-dmr3.bin \
+  --output .local/dashboard-check
+```
+
+The output directory must be new. It contains JSON evidence and modeled PNG
+previews; no keyboard is opened. The checker runs original instructions with
+synthetic external-image fixtures and a modeled LCD/GPIO path. It is not a
+whole-device emulator or a substitute for physical flashing/restoration, USB,
+interrupt timing, idle/wake and real selector-artwork checks.
+
+To regenerate the compiler-free data after a verified DMR3 build:
+
+```sh
+.venv/bin/python tools/generate_payload.py .local/dmr3-build --extension dmr3
+```
+
+Review the source hashes, exact candidate hash and bounded replacements together.
+Never relax a hash check to accept an unexplained compiler or firmware change.
+
 ## Before contributing
 
 Read [CONTRIBUTING.md](../CONTRIBUTING.md). Use a short-lived branch, open a PR to `main`, and report the checks actually performed. See [RELEASING.md](RELEASING.md) for the separate release workflow.

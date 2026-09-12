@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "dorkmount-patcher"
-version = "0.2.0a2"
+version = "0.2.0a3"
 description = "Add DirectDraw to the be quiet! Dark Mount Media Dock"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -20,6 +20,7 @@ Issues = "https://github.com/JimStroomberg/Dorkmount-patcher/issues"
 [project.optional-dependencies]
 desktop = ["PySide6>=6.11.2,<7"]
 dev = ["pytest>=8", "ruff>=0.11", "build>=1", "PySide6>=6.11.2,<7"]
+firmware-check = ["unicorn==2.1.4", "capstone==5.0.9"]
 
 [project.scripts]
 dorkmount-patcher = "dorkmount_patcher.cli:main"

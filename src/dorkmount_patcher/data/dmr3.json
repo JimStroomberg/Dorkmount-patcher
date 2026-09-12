@@ -1,0 +1,182 @@
+{
+  "schema": 1,
+  "id": "darkmount-1.29.0-dmr3",
+  "extension": "DMR3",
+  "hardware": {
+    "model": 1,
+    "revision": 1,
+    "usb_vendor": "373f",
+    "usb_product": "0001"
+  },
+  "official_version": "1.29.0",
+  "components": {
+    "main": {
+      "stock_filename": "MCU0_1.29.0.0.bin",
+      "size": 85508,
+      "stock_sha256": "94d6927103b1a0bdbe8a214e90fb7f0bcc4f891a546ada8f63d0f0d2869c5b70",
+      "patched_sha256": "23fa16e4e5bc0fbc520bdfadc35e3d3d2e2cbbdd45ee34651336ce647a421c02"
+    },
+    "dock": {
+      "stock_filename": "MCU1_MMD_1.29.0.0.bin",
+      "size": 81000,
+      "stock_sha256": "d2cbc938269e9c2272c3667320c625cdd418f0dda7e079050c45dbc1f6ebb0df",
+      "patched_sha256": "8aadce6d0e2f89cbd9d9db08c26dac4d16a4ad55f1a0c1e18f589ee228ad2c1d"
+    },
+    "numpad": {
+      "stock_filename": "MCU2_NPD_1.29.0.0.bin",
+      "size": 325200,
+      "stock_sha256": "12a57913e1a3bf4ecddd95a4877d93fbd5fa9b8c9ece988f535f5e81500baf1d",
+      "patched_sha256": "12a57913e1a3bf4ecddd95a4877d93fbd5fa9b8c9ece988f535f5e81500baf1d"
+    }
+  },
+  "patches": [
+    {
+      "component": "dock",
+      "offset": 13968,
+      "length": 4,
+      "purpose": "Replace Clock tile when selected or unselected",
+      "original_sha256": "f4ff6093dac86792e8d45d4686af2eae2524e32816bf5046d663bfab9bf28d3e",
+      "section": ".crop_hook",
+      "replacement_hex": "00f01cbf",
+      "replacement_sha256": "fb132647af08265706c8080874e8b6b0774fcd54a7846ed0099600b533086c95"
+    },
+    {
+      "component": "dock",
+      "offset": 14314,
+      "length": 12,
+      "purpose": "Enter Dashboard instead of Clock submenu",
+      "original_sha256": "dea10d7177204f9b3fe8a1236bc57c325288cad3dcd5156b370fac5c1774d989",
+      "section": ".app_entry",
+      "replacement_hex": "a8f8004000f0a5f8fff7c5bf",
+      "replacement_sha256": "db284445e9edf766b7efe998897ab908b6ad0f0f6d38d002e192862d33bb1be2"
+    },
+    {
+      "component": "dock",
+      "offset": 14328,
+      "length": 36,
+      "purpose": "Replace Clock tile after full menu redraw",
+      "original_sha256": "065898204db5860f01089ff285902423350a399096a9b00f4d7a0e2e70729582",
+      "section": ".image",
+      "replacement_hex": "10b5b0f5163f03d0044600f086fe04b110bd034800210068bde8104000f02ebe64040108",
+      "replacement_sha256": "9eb4e64a90c18bf4bdfc4a2cad213e0136996ff9ecbf3fa95ac22acadfacc70a"
+    },
+    {
+      "component": "dock",
+      "offset": 14648,
+      "length": 4,
+      "purpose": "Disable stopwatch rendering",
+      "original_sha256": "cbae1f9729348b102e6104082148ed095f495a7856bf191ec7910bf5fc9e6f24",
+      "section": ".stopwatch_entry",
+      "replacement_hex": "704700bf",
+      "replacement_sha256": "0c302d771ae76f031fe8c4a87c6f54f6b1e93bbf4552d26a8ea553f2a89c0530"
+    },
+    {
+      "component": "dock",
+      "offset": 14652,
+      "length": 55,
+      "purpose": "Draw waiting screen on entry",
+      "original_sha256": "7734e865f2b17a6f4c955407c4e83274e3a18c27b6c94eda9df2b89c6f5a8978",
+      "section": ".waiting",
+      "replacement_hex": "f8b500f083f80020fef716fd0a20602100224ff6ff73029030200190024800902820fff797fa8fbd6899000857616974696e672e2e2e00",
+      "replacement_sha256": "d28ed9410d08327e67c4cedbdaf2786cc04b5c35df18bd43c8922f296682ffc9"
+    },
+    {
+      "component": "dock",
+      "offset": 14944,
+      "length": 4,
+      "purpose": "Disable periodic Clock drawing",
+      "original_sha256": "32259f888cf16760aec2fe831960c9b8495efc3494bba92af65a4a7cee87a930",
+      "section": ".clock_entry",
+      "replacement_hex": "704700bf",
+      "replacement_sha256": "0c302d771ae76f031fe8c4a87c6f54f6b1e93bbf4552d26a8ea553f2a89c0530"
+    },
+    {
+      "component": "dock",
+      "offset": 14948,
+      "length": 276,
+      "purpose": "DMR3 drawing endpoint",
+      "original_sha256": "56b248ff6958cb145228ce0354bfaa236814aec4cc88be4f2a76df6bc90a1691",
+      "section": ".draw",
+      "replacement_hex": "f0b585b020b105b0bde8f04001f0d0bc3d4c25780b2d1ad33d2d18d86078b0b9e079442813d1207a4d2810d1607a52280dd1a07a01280ad134480b2d0088e67a08bf002e0bd001281bd1152d1dd200200021032205b0bde8f04002f0e5be2c4a013802a9b0fa80f00b4692e870004009002270c38df811000c2002f0d5fe05b0f0bd002000210a22e4e7228a002aded0638a002bdbd0a0891718b7f5a07fd6d8e18903eb010cbcf1f00fd0d8152d03fb02fe08bf012e1cd0022ec8d1bef1150fc5d8132202eb4e02aa42c0d17a1eacf101034fea4e05fef751fe0026ae420fd2a719787dfff7fcf8387dfff7f9f80236f4e7bef5805fdfd8a48a009401f09cfa002000210022a5e7ac460020f20000201ca50008",
+      "replacement_sha256": "2985704baaa168d5792dbed2ea0cfee546f818ef724be019e3529af90cc336cf"
+    },
+    {
+      "component": "dock",
+      "offset": 17520,
+      "length": 4,
+      "purpose": "Disable timer editor and retain normal dial behaviour",
+      "original_sha256": "6c272f8d7dcefd99b55c6521f00d6fa8f03f10430e481e2c8e3a750a97bb65f4",
+      "section": ".timer_entry",
+      "replacement_hex": "00207047",
+      "replacement_sha256": "a7ddd513d149ea16fdd4db3f82267f83087aeaddd06b5dde5468adb704205fc4"
+    },
+    {
+      "component": "dock",
+      "offset": 17524,
+      "length": 208,
+      "purpose": "Dashboard artwork and original-renderer trampolines",
+      "original_sha256": "9eac9c699f90302525ad75ab9a37db0a8f314063d36e04c0539b5ce96f97bccd",
+      "section": ".dashboard",
+      "replacement_hex": "2de9fc410546884600910a20142164225a2300f009fe4ff4fc6005f0f8010d4c002700ea5510c5f3c44540ea01261c2f08bfbde8fc81042f404618bf7019e3190090e05d59789a78db7800f0edfd0437ede700bf28a5000870b5069eb6f5163f08bf70bddde904545a2b08bf642a06d00696cde90454bde8704000f00cb81429f6d10a28f4d1002ef2d128462146bde87040fff7b5bf2de9f84ffff7c1b82de9f34f00f05bbed4d4444d52034001f000150000101a24442c1e283c24253d0a0a37340a13492d0a1a315016042b542203",
+      "replacement_sha256": "637250763ac5fd61b9499bdb3acfe4beefb78665fb0f5278039e0c13f9b08604"
+    },
+    {
+      "component": "dock",
+      "offset": 20940,
+      "length": 4,
+      "purpose": "Wrap full image renderer",
+      "original_sha256": "502081bcfd603ab4663614073a81045ae7de9c7265362a5962f44317def31580",
+      "section": ".image_hook",
+      "replacement_hex": "fef714bb",
+      "replacement_sha256": "457e9dadc6b85fc01c132bc074338ef02b315927c8bffcdb1542abed728526d7"
+    },
+    {
+      "component": "dock",
+      "offset": 24664,
+      "length": 4,
+      "purpose": "Route custom drawing commands",
+      "original_sha256": "c6b198b608a0d7d8507a7778b4e65b3cfa55a6b9965aefbaf4c63f851c4736e0",
+      "section": ".dispatch_hook",
+      "replacement_hex": "fdf704fd",
+      "replacement_sha256": "cd57500cd9a0a9da1d847cf43ecde1a0b33d5433746fc2d3097f3a9684f93f25"
+    },
+    {
+      "component": "dock",
+      "offset": 20192,
+      "length": 2,
+      "purpose": "Forward Dashboard Left/Right",
+      "original_sha256": "f2f4c11e8e9e74cde05751f784f2f4493cd4d7265ec37844cd32dfc66cc34873",
+      "replacement_hex": "76d0",
+      "replacement_sha256": "3a42e3d37c4f344adad603234e0a099accd254a7fdf9ca520318cb3694027202"
+    },
+    {
+      "component": "dock",
+      "offset": 14152,
+      "length": 2,
+      "purpose": "Ignore Dashboard single-click",
+      "original_sha256": "1c972398125398a3665f212930758ae9518a8c948adbccca6753f11525730591",
+      "replacement_hex": "0028",
+      "replacement_sha256": "2ee788372518190a6ab539cbb20331df1040f21846e3ba836c269aee907c894c"
+    },
+    {
+      "component": "main",
+      "offset": 34276,
+      "length": 1,
+      "purpose": "Forward custom Dock command zero",
+      "original_sha256": "bbeebd879e1dff6918546dc0c179fdde505f2a21591c9a9c96e36b054ec5af83",
+      "replacement_hex": "38",
+      "replacement_sha256": "2c624232cdd221771294dfbb310aca000a0df6ac8b66b696d90ef06fdefb64a3"
+    }
+  ],
+  "builder": "firmware/dmr3/build.py",
+  "toolchain": "Clang/LLD/llvm-objcopy 22.1.8",
+  "flashing_included": true,
+  "hardware_verified": false,
+  "source_sha256": {
+    "firmware/dmr3/build.py": "557759957978dc2443e3371d0cc58ab327178ffaab476e147314080d3b6176a6",
+    "firmware/dmr3/dashboard.c": "2367aaf62afbd05c65dd0bf2e83b76feb8feea74aa07445ed8129891de69fbd1",
+    "firmware/dmr3/hooks.S": "a3b4892ac9152dbb19c2bc3f23ce9a6ce367d0264797fd7a510a1fcfc06f27e0",
+    "firmware/dmr3/live-draw.c": "16b1ad2e0589159630cb71f582e4cfa753d0f7e14d4b49a743ff6823a508af0d",
+    "firmware/dmr3/live-draw.ld": "58fce17c22bf47513f801f0b36fb343f5e5d5be2d18166ed099adf9819c6631e"
+  }
+}

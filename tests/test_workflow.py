@@ -17,7 +17,7 @@ class NoSleepGuard:
         pass
 
 
-def backend_for(images, bad_return=False):
+def backend_for(images, bad_return=False, returned_version=3):
     normal = Device("/dev/synthetic", "1-2", "synthetic", 1)
     boot = Device("/dev/synthetic-update", "1-2", "synthetic-update", 9)
     models = []
@@ -38,7 +38,7 @@ def backend_for(images, bad_return=False):
         class Final:
             def request(self, command, payload=b""):
                 assert command == (0x21, 0)
-                return bytes.fromhex("444d52024001f00015000010") if not bad_return else b"wrong"
+                return b"DMR" + bytes([returned_version]) + bytes.fromhex("4001f00015000010") if not bad_return else b"wrong"
             def close(self, **kwargs):
                 pass
         return Final()
@@ -50,14 +50,17 @@ def backend_for(images, bad_return=False):
     )
 
 
-def test_complete_workflow_saves_stock_before_transfer_and_verifies_return(synthetic, tmp_path, monkeypatch):
+@pytest.mark.parametrize("version", [2, 3])
+def test_complete_workflow_saves_stock_before_transfer_and_verifies_return(synthetic, tmp_path, monkeypatch, version):
     stock, output, _ = synthetic
-    normal, models, backend = backend_for(tuple(output.values()))
+    normal, models, backend = backend_for(tuple(output.values()), returned_version=version)
     monkeypatch.setattr(updater.Transfer, "__init__", _fast_transfer_init)
-    run = updater.install(firmware.prepare(stock), normal, lambda *_: None,
+    run = updater.install(firmware.prepare(stock, extension=f"dmr{version}"), normal, lambda *_: None,
                           root=tmp_path, backend=backend, inhibit_factory=NoSleepGuard)
     result = json.loads((run / "session.json").read_text())
     assert result["status"] == "verified"
+    assert result["capabilities"]["dmr_version"] == version
+    assert result["capabilities"]["features"] == ["dock_directdraw", "dock_navigation"] + (["dashboard_view"] if version == 3 else [])
     assert models[-1].committed
     assert all((run / f"{name}-stock.bin").read_bytes() == raw for name, raw in stock.items())
 
@@ -79,6 +82,15 @@ def test_wrong_post_update_capabilities_never_claim_success(synthetic, tmp_path,
     journals = list(tmp_path.glob("*/session.json"))
     assert len(journals) == 1
     assert json.loads(journals[0].read_text())["status"] == "needs_attention"
+
+
+def test_old_dmr2_cannot_verify_a_dashboard_install(synthetic, tmp_path, monkeypatch):
+    stock, output, _ = synthetic
+    normal, _, backend = backend_for(tuple(output.values()), returned_version=2)
+    monkeypatch.setattr(updater.Transfer, "__init__", _fast_transfer_init)
+    with pytest.raises(ProtocolError, match="expected DirectDraw extension"):
+        updater.install(firmware.prepare(stock), normal, lambda *_: None,
+                        root=tmp_path, backend=backend, inhibit_factory=NoSleepGuard)
 
 
 def test_changed_device_refused_before_export_or_open(synthetic, tmp_path):

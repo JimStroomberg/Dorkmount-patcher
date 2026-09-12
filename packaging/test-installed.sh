@@ -5,6 +5,7 @@ test -f /usr/share/applications/dorkmount-patcher.desktop
 test -f /usr/share/icons/hicolor/scalable/apps/io.github.JimStroomberg.DorkmountPatcher.svg
 test -f /usr/lib/udev/rules.d/70-dorkmount-patcher.rules
 test -f /opt/dorkmount-patcher/_internal/dorkmount_patcher/data/dmr2.json
+test -f /opt/dorkmount-patcher/_internal/dorkmount_patcher/data/dmr3.json
 test -f /opt/dorkmount-patcher/_internal/dorkmount_patcher/data/developers.md
 test "$(dorkmount-patcher --version)" = "$EXPECTED_VERSION"
 desktop-file-validate /usr/share/applications/dorkmount-patcher.desktop

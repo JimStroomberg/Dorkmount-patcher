@@ -121,8 +121,9 @@ def test_verified_cache_does_not_require_tls_configuration(tmp_path, monkeypatch
     assert firmware.obtain_originals(tmp_path) == synthetic[0]
 
 
+@pytest.mark.parametrize("restore", [False, True])
 def test_cli_download_prepares_and_removes_temporary_cache(
-        local_https, tmp_path, synthetic, capsys, monkeypatch):
+        local_https, tmp_path, synthetic, capsys, monkeypatch, restore):
     caches = []
     obtain = firmware.obtain_originals
 
@@ -132,11 +133,13 @@ def test_cli_download_prepares_and_removes_temporary_cache(
 
     monkeypatch.setattr(firmware, "obtain_originals", record)
     out = tmp_path / "prepared"
-    assert cli.main(["prepare", "--download", "--output", str(out)]) == 0
+    flags = ["--restore"] if restore else []
+    assert cli.main(["prepare", "--download", "--output", str(out), *flags]) == 0
     result = json.loads(capsys.readouterr().out)
-    assert result["mode"] == "dmr2"
-    assert all((out / f"{name}-dmr2.bin").read_bytes() == raw
-               for name, raw in synthetic[1].items())
+    mode = "stock" if restore else firmware.DEFAULT_EXTENSION
+    assert result["mode"] == mode
+    assert all((out / f"{name}-{mode}.bin").read_bytes() == raw
+               for name, raw in synthetic[0 if restore else 1].items())
     assert caches and all(not path.exists() for path in caches)
 
 

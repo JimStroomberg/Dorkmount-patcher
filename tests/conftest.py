@@ -19,5 +19,5 @@ def synthetic(monkeypatch):
                      "original_sha256": firmware.digest(stock["dock"][10:18]),
                      "replacement_sha256": firmware.digest(b"OUR CODE")}],
     }
-    monkeypatch.setattr(firmware, "target", lambda: copy.deepcopy(spec))
+    monkeypatch.setattr(firmware, "target", lambda extension="dmr3": copy.deepcopy(spec))
     return stock, output, spec

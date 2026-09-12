@@ -14,20 +14,23 @@ from .https import verified_context
 
 BASE_URL = "https://dfu-release.bequiet.com/fw/dark_mount/"
 COMPONENTS = ("main", "dock", "numpad")
+DEFAULT_EXTENSION = "dmr3"
 
 
 def digest(data):
     return hashlib.sha256(data).hexdigest()
 
 
-def target():
-    return json.loads(files(__package__).joinpath("data/dmr2.json").read_text())
+def target(extension=DEFAULT_EXTENSION):
+    if extension not in ("dmr2", "dmr3"):
+        raise ValueError("Unsupported firmware extension.")
+    return json.loads(files(__package__).joinpath(f"data/{extension}.json").read_text())
 
 
 def checked_images(images, mode="stock"):
-    if mode not in ("stock", "dmr2") or set(images) != set(COMPONENTS):
+    if mode not in ("stock", "dmr2", "dmr3") or set(images) != set(COMPONENTS):
         raise ValueError("A complete supported firmware set is required.")
-    metadata = target()["components"]
+    metadata = target(DEFAULT_EXTENSION if mode == "stock" else mode)["components"]
     for name in COMPONENTS:
         raw, expected = images[name], metadata[name]
         key = "stock_sha256" if mode == "stock" else "patched_sha256"
@@ -53,11 +56,11 @@ class Package:
         checked_images(self.images, self.mode)
 
 
-def prepare(originals, restore=False):
+def prepare(originals, restore=False, extension=DEFAULT_EXTENSION):
     checked_images(originals)
     if restore:
         return Package(originals, originals, "stock")
-    spec = target()
+    spec = target(extension)
     candidates = {name: bytearray(originals[name]) for name in COMPONENTS}
     occupied = {name: [] for name in COMPONENTS}
     # Validate every region before applying even the first patch.
@@ -79,7 +82,7 @@ def prepare(originals, restore=False):
         candidates[region["component"]][start:start + region["length"]] = bytes.fromhex(
             region["replacement_hex"]
         )
-    return Package(originals, {name: bytes(raw) for name, raw in candidates.items()}, "dmr2")
+    return Package(originals, {name: bytes(raw) for name, raw in candidates.items()}, extension)
 
 
 def private_directory(path):
@@ -142,7 +145,7 @@ def export(package, directory):
     for name in COMPONENTS:
         atomic_write(directory / f"{name}-stock.bin", package.stock[name])
         atomic_write(directory / f"{name}-{package.mode}.bin", package.images[name])
-    record = {"mode": package.mode, "target": "darkmount-1.29.0-dmr2", "images": {
+    record = {"mode": package.mode, "target": f"darkmount-1.29.0-{package.mode}", "images": {
         name: {"size": len(package.images[name]), "sha256": digest(package.images[name])}
         for name in COMPONENTS
     }}
