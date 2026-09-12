@@ -19,7 +19,7 @@ The original source extraction preserved DMR1/DMR2. The current DMR3 candidate a
 - Compiler-free runtime patching from verified local/downloaded originals; full hash and range checks.
 - Plain-language Linux desktop updater with simulated mode, explicit install action, scoped USB setup, stock copies, a sleep inhibitor, requested-range transfers and fresh reconnect verification.
 - Standalone DirectDraw client, developer guide, protocol/frame tests and Linux bundling. Companion apps can use it independently of Dorkmount.
-- Ubuntu/CachyOS package metadata, desktop integration and USB rules; GitHub Actions build, installed-package checks and audited alpha/stable release workflow.
+- Ubuntu/CachyOS package metadata, desktop integration and USB rules; GitHub Actions build, installed-package checks and audited prerelease/stable release workflow.
 
 The native installer and DMR3 workflow have maintainer-confirmed CachyOS hardware results, including restoration and reinstallation. Ubuntu 26.04 still needs real-machine verification. Prior DMR1/DMR2 evidence used the official Web update route. See [validation](VALIDATION.md).
 

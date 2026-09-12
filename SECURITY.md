@@ -6,7 +6,7 @@ This gives us a chance to investigate before the details are public.
 
 Include the app version, operating system, what happened and how to reproduce it.
 Please leave out personal information, firmware files and full update logs.
-Security fixes are made against the latest alpha release.
+Security fixes are made against the latest release.
 
 If private reporting is unavailable, open an issue asking for a private contact
 route, without including the vulnerability details.

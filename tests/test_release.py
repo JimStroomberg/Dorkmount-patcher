@@ -31,17 +31,27 @@ def project(tmp_path, version):
     return tmp_path
 
 
-@pytest.mark.parametrize("version,tag,deb,filename,arch,alpha", [
+@pytest.mark.parametrize("version,tag,deb,filename,arch,prerelease", [
     ("1.2.3a2", "v1.2.3-alpha.2", "1.2.3~alpha2-1",
      "dorkmount-patcher_1.2.3-alpha2-1_amd64.deb", "1.2.3alpha2", True),
+    ("1.2.3b1", "v1.2.3-beta.1", "1.2.3~beta1-1",
+     "dorkmount-patcher_1.2.3-beta1-1_amd64.deb", "1.2.3beta1", True),
+    ("1.2.3b12", "v1.2.3-beta.12", "1.2.3~beta12-1",
+     "dorkmount-patcher_1.2.3-beta12-1_amd64.deb", "1.2.3beta12", True),
     ("1.2.3", "v1.2.3", "1.2.3-1",
      "dorkmount-patcher_1.2.3-1_amd64.deb", "1.2.3", False),
 ])
-def test_release_maps_alpha_and_stable_versions(tmp_path, version, tag, deb, filename, arch, alpha):
+def test_release_maps_versions(tmp_path, version, tag, deb, filename, arch, prerelease):
     info = release.metadata(project(tmp_path, version))
     assert (info["tag"], info["debian_version"], info["arch_version"], info["prerelease"]) == (
-        tag, deb, arch, alpha)
+        tag, deb, arch, prerelease)
     assert info["debian_filename"] == filename
+
+
+@pytest.mark.parametrize("version", ["1.2.3b0", "1.2.3b01", "1.2.3beta1"])
+def test_release_refuses_noncanonical_beta_versions(tmp_path, version):
+    with pytest.raises(ValueError, match="Release versions must be"):
+        release.metadata(project(tmp_path, version))
 
 
 def test_release_refuses_mismatched_versions(tmp_path):

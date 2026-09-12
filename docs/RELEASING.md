@@ -1,13 +1,14 @@
 # Releasing
 
 `main` contains reviewed work. Use short-lived branches and pull requests for
-changes, and version tags for alpha and stable releases.
+changes, and version tags for alpha, beta and stable releases.
 
 ## Versions
 
 | Channel | App version | Git tag | Debian version | CachyOS version |
 |---|---|---|---|---|
-| Alpha | `0.2.0a3` | `v0.2.0-alpha.3` | `0.2.0~alpha3-1` | `0.2.0alpha3-1` |
+| Alpha | `0.2.0a2` | `v0.2.0-alpha.2` | `0.2.0~alpha2-1` | `0.2.0alpha2-1` |
+| Beta | `0.2.0b1` | `v0.2.0-beta.1` | `0.2.0~beta1-1` | `0.2.0beta1-1` |
 | Stable | `0.2.0` | `v0.2.0` | `0.2.0-1` | `0.2.0-1` |
 
 Update `pyproject.toml`, `VERSION` and the runtime `__version__` together.
@@ -35,18 +36,18 @@ and keep contributor code off privileged workflows and hardware runners.
    Include test results and any remaining platform limitations. Merge after review
    and **Required checks** passes.
 2. On `main`, run **Actions → Release candidate → Run workflow** with the exact
-   tag, for example `v0.2.0-alpha.3`.
+   tag, for example `v0.2.0-beta.1`.
 3. The workflow builds and tests the packages, checks their contents, uploads a
    draft release and downloads the assets again to verify filenames and checksums.
-   Both alpha and stable releases stay drafts.
+   All release channels stay drafts.
 4. Test those downloaded packages on the supported desktops and keyboard using
    [TESTING.md](TESTING.md). Record the package checksums and results in the release
    notes. Keep firmware files and full logs local.
-5. Review the notes and publish the existing draft. Keep alphas marked as
+5. Review the notes and publish the existing draft. Keep alphas and betas marked as
    prereleases, with **latest stable** disabled. Publish the tested files without
    rebuilding them.
 
-Continue alpha releases until the supported-platform checks are complete.
+Continue prereleases until the supported-platform checks are complete.
 [Validation](VALIDATION.md) records CachyOS hardware results and the pending
 Ubuntu desktop/USB test.
 
@@ -57,7 +58,7 @@ portable Linux archive, source archive, reference-client wheel, `SHA256SUMS`,
 artifact manifest and build metadata. `tools/audit_release.py` checks this asset
 list and rejects private files, full firmware images and unsafe archive paths.
 
-Debian uses `~` inside alpha package versions for upgrade ordering. Download
+Debian uses `~` inside prerelease package versions for upgrade ordering. Download
 filenames use `-` because GitHub normalizes tildes. Checksums use the downloadable
 filename.
 

@@ -1,6 +1,9 @@
 #!/bin/sh
 set -eu
 export DEBIAN_FRONTEND=noninteractive
+# Users must be able to upgrade alpha -> beta -> stable without a downgrade.
+dpkg --compare-versions '0.2.0~alpha2-1' lt '0.2.0~beta1-1'
+dpkg --compare-versions '0.2.0~beta1-1' lt '0.2.0-1'
 # Use authenticated HTTPS; HTTP mirrors may be unavailable on developer networks.
 sed -i 's|http://|https://|g' /etc/apt/sources.list.d/ubuntu.sources
 printf '%s\n' 'Acquire::https::CaInfo "/results/bootstrap-ca.crt";' 'Acquire::https::Timeout "30";' 'Acquire::Retries "2";' > /etc/apt/apt.conf.d/99dorkmount-test

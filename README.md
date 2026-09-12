@@ -34,7 +34,7 @@ Media Dock and Numpad attached and the exact supported **1.29.0** firmware set.
 The app checks compatibility before preparing an update. Other revisions or
 firmware versions are refused. See [compatibility and hashes](docs/FIRMWARE.md).
 
-This is an **alpha release**. The maintainer has confirmed installation,
+This is a **beta release**. The maintainer has confirmed installation,
 restoration, reinstallation, drawing, navigation, reconnect and app-restart
 checks on CachyOS. This does not establish recovery from every interrupted update
 or a keyboard that no longer starts. [Validation and limits](docs/VALIDATION.md)
@@ -42,7 +42,7 @@ or a keyboard that no longer starts. [Validation and limits](docs/VALIDATION.md)
 ## Install and use
 
 1. Download the matching package from [Releases](https://github.com/JimStroomberg/Dorkmount-patcher/releases).
-   **Dashboard requires 0.2.0-alpha.3 or newer.** Alpha.1/alpha.2 use the older Clock-based patch.
+   **Dashboard requires 0.2.0-beta.1 or newer.** Alpha.1/alpha.2 use the older Clock-based patch.
 2. Install the package, reconnect the keyboard and open **Dorkmount Patcher**.
 3. Close other keyboard-control apps. Choose **Check keyboard → Prepare update → Install Dashboard**.
 4. Keep the keyboard connected until verification finishes. Close the updater,
@@ -51,7 +51,7 @@ or a keyboard that no longer starts. [Validation and limits](docs/VALIDATION.md)
 Native packages include the app, menu shortcut and keyboard-access rule. Your
 package manager installs the required libraries; no Python setup or firmware
 compiler is needed. [Installation and restoration](docs/INSTALLING.md) ·
-[Troubleshooting](docs/TROUBLESHOOTING.md) · [Current release notes](docs/releases/v0.2.0-alpha.3.md)
+[Troubleshooting](docs/TROUBLESHOOTING.md) · [Current release notes](docs/releases/v0.2.0-beta.1.md)
 
 ## Developers and contributors
 
