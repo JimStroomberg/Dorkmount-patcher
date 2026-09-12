@@ -68,7 +68,7 @@ chain. Check the actual selector artwork, highlight, accent, idle/wake, other
 apps, physical navigation and full install/restore flow using [TESTING.md](../TESTING.md).
 Generated images, exact original-instruction evidence and firmware stay ignored.
 
-Local candidate packages built from clean implementation commit `ad8b61b` pass
+Local candidate packages built from clean implementation commit `67b87aa` pass
 Ubuntu 26.04 and current stable CachyOS container installation, automatic runtime
 dependency resolution, offscreen/X11/headless-Wayland launch, desktop entry/USB
 rule checks and removal. The installed-package checker requires both legacy

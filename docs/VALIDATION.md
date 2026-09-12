@@ -28,7 +28,7 @@ The DMR3 Dock firmware has SHA-256
 `8aadce6d0e2f89cbd9d9db08c26dac4d16a4ad55f1a0c1e18f589ee228ad2c1d`.
 All component hashes and compatible hardware are in [FIRMWARE.md](FIRMWARE.md).
 
-The Dashboard/system-trust integration at `60d4cc1` passes 112 tests and 35
+The Dashboard/system-trust integration at `42eb2c3` passes 112 tests and 35
 subtests, lint and release metadata checks. Its GitHub Actions package checks
 pass for Ubuntu 26.04 and CachyOS. These establish package installation, declared
 dependencies, offscreen/X11/headless-Wayland startup and removal in containers;
