@@ -46,7 +46,15 @@ make package-test OUT=dist/next-candidate
 
 The shared PyInstaller application is built using `packaging/Dockerfile`; `tools/package_linux.py` prepares Debian metadata and a `PKGBUILD` around the same files. The official CachyOS container runs `makepkg`. `packaging/platforms.json` pins the test images and declares the remaining system dependencies. No keyboard device is exposed to any container.
 
-Package tests install through APT/pacman, allowing those tools to resolve dependencies. They check the installed desktop entry, USB rule, bundled developer guide, version, offscreen/X11/headless-Wayland demo launch, and uninstall. They do not run a complete user desktop, logind session or physical keyboard update.
+Package tests install through APT/pacman, allowing those tools to resolve dependencies. They check the installed desktop entry, USB rule, bundled developer guide, version, offscreen/X11/headless-Wayland demo launch, verified HTTPS preparation and uninstall. Preparation downloads the exact supported official files, verifies all hashes and constructs the existing patch entirely inside the disposable container. Manufacturer bytes are not included in test artifacts. These checks require the official download server to be reachable; they do not run a complete user desktop, logind session or physical keyboard update.
+
+To exercise the same download/preparation path without opening a keyboard:
+
+```sh
+dorkmount-patcher prepare --download --output ./prepared-local
+```
+
+The output directory must be new and its firmware files must stay private. For offline preparation, use `--stock-dir ./originals` instead of `--download`. HTTPS uses the operating system's trust store, including an explicit `SSL_CERT_FILE` or `SSL_CERT_DIR` override. On Linux, if the bundled OpenSSL's default certificate file is absent and neither override is set, the app loads the system CA bundle at `/etc/ssl/certs/ca-certificates.crt`. Certificate and hostname verification stay enabled.
 
 Before adding display-test tools, the tests check the app's library dependencies
 and launch its offscreen demo. The disposable CachyOS test container receives

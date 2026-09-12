@@ -31,4 +31,9 @@ done
 HOME=/tmp/dorkmount-desktop WAYLAND_DISPLAY=dorkmount-test QT_QPA_PLATFORM=wayland dorkmount-patcher --demo --screenshot /results/demo-wayland.png
 test -s /results/demo-wayland.png
 test ! -d /tmp/dorkmount-desktop/.local/state/dorkmount-patcher
+# Exercise HTTPS in the actual frozen runtime, without any USB access. Keep
+# manufacturer bytes inside this disposable container, outside uploaded results.
+HOME=/tmp/dorkmount-desktop dorkmount-patcher prepare --download --output /tmp/dorkmount-prepared > /results/prepare.json
+test -s /tmp/dorkmount-prepared/manifest.json
+rm -rf /tmp/dorkmount-prepared
 printf '%s\n' 'Installed app launches; desktop metadata and USB rule validate; demo creates no update state.'

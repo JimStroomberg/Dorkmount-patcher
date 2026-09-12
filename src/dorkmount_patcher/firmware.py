@@ -10,6 +10,8 @@ from importlib.resources import files
 from pathlib import Path
 from types import MappingProxyType
 
+from .https import verified_context
+
 BASE_URL = "https://dfu-release.bequiet.com/fw/dark_mount/"
 COMPONENTS = ("main", "dock", "numpad")
 
@@ -111,13 +113,15 @@ class OfficialOnly(urllib.request.HTTPRedirectHandler):
 def obtain_originals(directory, progress=lambda text: None, opener=None):
     """Download fixed filenames only; never auto-select a newer firmware release."""
     directory = private_directory(directory)
-    opener = opener or urllib.request.build_opener(OfficialOnly())
     images = {}
     for name, item in target()["components"].items():
         path = directory / item["stock_filename"]
         progress(f"Preparing {dict(main='keyboard', dock='screen', numpad='number pad')[name]}…")
         raw = path.read_bytes() if path.is_file() else None
         if raw is None or len(raw) != item["size"] or digest(raw) != item["stock_sha256"]:
+            if opener is None:
+                opener = urllib.request.build_opener(
+                    OfficialOnly(), urllib.request.HTTPSHandler(context=verified_context()))
             request = urllib.request.Request(BASE_URL + item["stock_filename"], headers={
                 "User-Agent": "Dorkmount-patcher/0.2 (local firmware preparation)"
             })

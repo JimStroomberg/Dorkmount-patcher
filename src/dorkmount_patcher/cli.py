@@ -3,6 +3,7 @@
 import argparse
 import json
 import sys
+import tempfile
 from pathlib import Path
 
 from . import __version__
@@ -15,14 +16,21 @@ def main(argv=None):
     parser.add_argument("--screenshot", type=Path, help=argparse.SUPPRESS)
     sub = parser.add_subparsers(dest="command")
     offline = sub.add_parser("prepare", help="Verify and prepare firmware files without device access")
-    offline.add_argument("--stock-dir", type=Path, required=True)
+    source = offline.add_mutually_exclusive_group(required=True)
+    source.add_argument("--stock-dir", type=Path)
+    source.add_argument("--download", action="store_true",
+                        help="Download exact official files over verified HTTPS; no keyboard access")
     offline.add_argument("--output", type=Path, required=True)
     offline.add_argument("--restore", action="store_true")
     args = parser.parse_args(argv)
     if args.command == "prepare":
-        from .firmware import export, prepare, target
-        originals = {name: (args.stock_dir / item["stock_filename"]).read_bytes()
-                     for name, item in target()["components"].items()}
+        from .firmware import export, obtain_originals, prepare, target
+        if args.download:
+            with tempfile.TemporaryDirectory(prefix="dorkmount-prepare-") as cache:
+                originals = obtain_originals(Path(cache))
+        else:
+            originals = {name: (args.stock_dir / item["stock_filename"]).read_bytes()
+                         for name, item in target()["components"].items()}
         print(json.dumps(export(prepare(originals, args.restore), args.output), indent=2))
         return 0
     if args.screenshot and not args.demo:
