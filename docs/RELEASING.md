@@ -31,6 +31,7 @@ and keep contributor code off privileged workflows and hardware runners.
 ## Prepare and publish
 
 1. Open a PR with the changes, version update and `docs/releases/<tag>.md` notes.
+   Use full GitHub links in the notes so they also work on the release page.
    Include test results and any remaining platform limitations. Merge after review
    and **Required checks** passes.
 2. On `main`, run **Actions → Release candidate → Run workflow** with the exact
