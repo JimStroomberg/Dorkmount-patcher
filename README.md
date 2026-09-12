@@ -68,6 +68,17 @@ not implemented. New host widgets do not require new firmware.
 `--demo` previews the desktop app without keyboard access, downloads or system
 changes. The demo also runs on macOS; Mac firmware installation is not supported yet.
 
+## Support the project
+
+Dorkmount Patcher is free and open source. If you find it useful, you can help
+support its development and maintenance:
+
+- ☕ [Ko-fi](https://ko-fi.com/jimstroomberg)
+- ❤️ GitHub Sponsors — coming soon
+
+Donations are entirely optional. No features, support or access are restricted
+to sponsors.
+
 ## Source and attribution
 
 The repository contains project source and small replacement patches. It does
